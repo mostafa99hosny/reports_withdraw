@@ -45,33 +45,28 @@ const Login: React.FC = () => {
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Mock validation
-      if (loginForm.email === 'admin@reports.com' && loginForm.password === '123456') {
-        // Store auth data
-        const authData = {
-          user: {
-            id: 1,
-            name: 'أحمد محمد',
-            email: loginForm.email,
-            company: 'شركة التقارير المتقدمة',
-            role: 'admin'
-          },
-          token: 'mock-jwt-token',
-          loginTime: new Date().toISOString()
-        };
-        
-        localStorage.setItem('userAuth', JSON.stringify(authData));
-        
-        setMessage({ type: 'success', text: 'تم تسجيل الدخول بنجاح!' });
-        
-        setTimeout(() => {
-          navigate('/');
-        }, 1000);
-      } else {
-        setMessage({ type: 'error', text: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' });
-      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Accept any credentials and proceed
+      const authData = {
+        user: {
+          id: 1,
+          name: 'مستخدم',
+          email: loginForm.email || 'user@example.com',
+          company: 'شركة التقارير',
+          role: 'user'
+        },
+        token: 'mock-jwt-token',
+        loginTime: new Date().toISOString()
+      };
+
+      localStorage.setItem('userAuth', JSON.stringify(authData));
+
+      setMessage({ type: 'success', text: 'تم تسجيل الدخول بنجاح!' });
+
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
     } catch (error) {
       setMessage({ type: 'error', text: 'حدث خطأ أثناء تسجيل الدخول' });
     } finally {
@@ -222,8 +217,7 @@ const Login: React.FC = () => {
                     <div className="relative">
                       <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <input
-                        type="email"
-                        required
+                        type="text"
                         className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="أدخل بريدك الإلكتروني"
                         value={loginForm.email}
@@ -240,7 +234,6 @@ const Login: React.FC = () => {
                       <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <input
                         type={showPassword ? 'text' : 'password'}
-                        required
                         className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="أدخل كلمة المرور"
                         value={loginForm.password}

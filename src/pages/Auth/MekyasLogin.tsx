@@ -26,40 +26,28 @@ const MekyasLogin: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (!formData.username || !formData.password) {
-      setError('يرجى إدخال اسم المستخدم وكلمة المرور');
-      return;
-    }
-
+    // Accept any credentials and proceed
     setIsLoading(true);
     setLoginStep('authenticating');
     setError('');
 
     try {
-      // Simulate API call to Mekyas authentication
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate authentication logic
-      if (formData.username === 'admin' && formData.password === 'mekyas123') {
-        setLoginStep('success');
-        
-        // Store authentication token/session
-        localStorage.setItem('mekyasAuth', JSON.stringify({
-          username: formData.username,
-          loginTime: new Date().toISOString(),
-          token: 'mekyas_auth_token_' + Date.now()
-        }));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Redirect after success message
-        setTimeout(() => {
-          navigate('/reports/mekyas');
-        }, 1500);
-      } else {
-        throw new Error('بيانات تسجيل الدخول غير صحيحة');
-      }
+      // Always succeed and navigate
+      setLoginStep('success');
+
+      localStorage.setItem('mekyasAuth', JSON.stringify({
+        username: formData.username || 'user',
+        loginTime: new Date().toISOString(),
+        token: 'mekyas_auth_token_' + Date.now()
+      }));
+
+      setTimeout(() => {
+        navigate('/reports/mekyas');
+      }, 700);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'حدث خطأ في تسجيل الدخول');
+      setError('حدث خطأ في تسجيل الدخول');
       setLoginStep('form');
     } finally {
       setIsLoading(false);
@@ -159,9 +147,9 @@ const MekyasLogin: React.FC = () => {
 
       <button
         type="submit"
-        disabled={isLoading || !formData.username || !formData.password}
+        disabled={isLoading}
         className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-          isLoading || !formData.username || !formData.password
+          isLoading
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : 'bg-blue-600 text-white hover:bg-blue-700'
         }`}
