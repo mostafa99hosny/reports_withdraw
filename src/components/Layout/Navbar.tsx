@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, User, Bell, LogOut, Settings, LogIn } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
+
 interface NavbarProps {
   onMenuToggle: () => void;
 }
@@ -30,29 +32,40 @@ const Navbar: React.FC<NavbarProps> = ({
     setUserDropdownOpen(false);
     navigate('/');
   };
+  const { t, lang, toggle } = useLanguage();
+
   return <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <button type="button" className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 md:hidden" onClick={onMenuToggle}>
-              <span className="sr-only">فتح القائمة</span>
+              <span className="sr-only">Menu</span>
               <Menu className="block h-6 w-6" aria-hidden="true" />
             </button>
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="text-blue-600 text-xl font-bold">
-                نظام العقارات
+                {t('appName')}
               </Link>
             </div>
           </div>
           <div className="flex items-center gap-4">
+            {/* Language toggle */}
+            <button
+              onClick={toggle}
+              className="text-sm text-gray-600 hover:text-gray-800 border px-3 py-1 rounded"
+              aria-label="Change Language"
+            >
+              {lang === 'ar' ? t('english') : t('arabic')}
+            </button>
+
             {user ? (
               <>
                 <button className="text-gray-500 hover:text-gray-700">
                   <Bell className="h-5 w-5" />
                 </button>
                 <div className="relative">
-                  <button 
-                    className="flex items-center text-sm focus:outline-none" 
+                  <button
+                    className="flex items-center text-sm focus:outline-none"
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   >
                     <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 ml-2">
@@ -70,20 +83,20 @@ const Navbar: React.FC<NavbarProps> = ({
                         <p className="text-sm text-gray-500">{user.email}</p>
                         <p className="text-xs text-gray-400">{user.company}</p>
                       </div>
-                      <Link 
-                        to="/settings" 
-                        className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                      <Link
+                        to="/settings"
+                        className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setUserDropdownOpen(false)}
                       >
                         <Settings className="h-4 w-4 ml-2" />
-                        <span>إعدادات المستخدم</span>
+                        <span>{t('settings')}</span>
                       </Link>
-                      <button 
-                        className="flex w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                      <button
+                        className="flex w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={handleLogout}
                       >
                         <LogOut className="h-4 w-4 ml-2" />
-                        <span>تسجيل الخروج</span>
+                        <span>{t('logout')}</span>
                       </button>
                     </div>
                   )}
@@ -91,12 +104,12 @@ const Navbar: React.FC<NavbarProps> = ({
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link 
-                  to="/auth/login" 
+                <Link
+                  to="/auth/login"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                 >
                   <LogIn className="h-4 w-4 ml-2" />
-                  تسجيل الدخول
+                  {t('login')}
                 </Link>
               </div>
             )}

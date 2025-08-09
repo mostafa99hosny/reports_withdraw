@@ -2,4 +2,11 @@ import './index.css';
 import React from "react";
 import { render } from "react-dom";
 import { App } from "./App";
-render(<App />, document.getElementById("root"));
+import { LanguageProvider } from './context/LanguageContext';
+
+render(
+  <LanguageProvider>
+    <App />
+  </LanguageProvider>,
+  document.getElementById("root")
+);
