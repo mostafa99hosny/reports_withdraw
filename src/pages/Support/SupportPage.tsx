@@ -92,9 +92,6 @@ const SupportPage: React.FC = () => {
             <button onClick={() => setActiveTab('contact')} className={`py-4 px-1 ${activeTab === 'contact' ? 'border-b-2 border-blue-500 text-blue-600' : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} font-medium text-sm`}>
               التواصل مع الدعم
             </button>
-            <button onClick={() => setActiveTab('tickets')} className={`py-4 px-1 ${activeTab === 'tickets' ? 'border-b-2 border-blue-500 text-blue-600' : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} font-medium text-sm`}>
-              تذاكر الدعم الفني
-            </button>
             <button onClick={() => setActiveTab('faq')} className={`py-4 px-1 ${activeTab === 'faq' ? 'border-b-2 border-blue-500 text-blue-600' : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} font-medium text-sm`}>
               الأسئلة الشائعة
             </button>
