@@ -36,10 +36,10 @@ const Home: React.FC = () => {
             {tr('الحل الأمثل لإدارة التقارير العقارية', 'The optimal solution for managing real estate reports')}
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            {tr('نظام إدارة تقارير العقارات', 'Real Estate Reports Management System')}
+            {tr('نظام إدارة التقارير ', ' Reports Management System')}
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto mb-8 leading-relaxed">
-            {tr('🚀 منصة متكاملة وذكية لإدارة وسحب وإرسال تقارير العقارات بين الأنظمة المختلفة', '🚀 A smart, integrated platform to manage, pull, and send real estate reports across systems')}
+            {tr('🚀 منصة متكاملة وذكية لإدارة وسحب وإرسال التقارير  بين الأنظمة المختلفة', '🚀 A smart, integrated platform to manage, pull, and send reports across systems')}
             <br />
             <span className="text-blue-200">{tr('بكفاءة عالية وسرعة فائقة', 'With high efficiency and blazing speed')}</span>
           </p>
