@@ -8,7 +8,7 @@ type Translations = Record<Lang, I18nDict>;
 
 const translations: Translations = {
   ar: {
-    appName: 'نظام اداره الملفات',
+    appName: 'نظام ادارة التقارير',
     home: 'الرئيسية',
     reports: 'تقارير العقارات',
     mekyasReports: 'تقارير مقياس',
