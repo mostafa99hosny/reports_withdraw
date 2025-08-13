@@ -8,7 +8,7 @@ type Translations = Record<Lang, I18nDict>;
 
 const translations: Translations = {
   ar: {
-    appName: 'نظام العقارات',
+    appName: 'نظام اداره الملفات',
     home: 'الرئيسية',
     reports: 'تقارير العقارات',
     mekyasReports: 'تقارير مقياس',
@@ -24,7 +24,7 @@ const translations: Translations = {
     arabic: 'العربية',
   },
   en: {
-    appName: 'Real Estate System',
+    appName: 'Reports Management System',
     home: 'Home',
     reports: 'Reports',
     mekyasReports: 'Mekyas Reports',
@@ -86,5 +86,10 @@ export const useLanguage = () => {
   const ctx = useContext(LanguageContext);
   if (!ctx) throw new Error('useLanguage must be used within a LanguageProvider');
   return ctx;
+};
+
+export const useTr = () => {
+  const { lang } = useLanguage();
+  return (ar: string, en: string) => (lang === 'ar' ? ar : en);
 };
 

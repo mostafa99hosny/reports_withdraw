@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Building, Phone, MapPin, FileText, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTr } from '../../context/LanguageContext';
 
 const Login: React.FC = () => {
+  const tr = useTr();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
   const [showPassword, setShowPassword] = useState(false);
@@ -62,13 +64,13 @@ const Login: React.FC = () => {
 
       localStorage.setItem('userAuth', JSON.stringify(authData));
 
-      setMessage({ type: 'success', text: 'تم تسجيل الدخول بنجاح!' });
+      setMessage({ type: 'success', text: tr('تم تسجيل الدخول بنجاح!','Logged in successfully!') });
 
       setTimeout(() => {
         navigate('/');
       }, 500);
     } catch (error) {
-      setMessage({ type: 'error', text: 'حدث خطأ أثناء تسجيل الدخول' });
+      setMessage({ type: 'error', text: tr('حدث خطأ أثناء تسجيل الدخول','An error occurred during login') });
     } finally {
       setIsLoading(false);
     }
@@ -81,13 +83,13 @@ const Login: React.FC = () => {
 
     // Validation
     if (registerForm.password !== registerForm.confirmPassword) {
-      setMessage({ type: 'error', text: 'كلمة المرور وتأكيد كلمة المرور غير متطابقتين' });
+      setMessage({ type: 'error', text: tr('كلمة المرور وتأكيد كلمة المرور غير متطابقتين','Password and confirm password do not match') });
       setIsLoading(false);
       return;
     }
 
     if (!registerForm.agreeToTerms) {
-      setMessage({ type: 'error', text: 'يجب الموافقة على الشروط والأحكام' });
+      setMessage({ type: 'error', text: tr('يجب الموافقة على الشروط والأحكام','You must agree to the Terms & Conditions') });
       setIsLoading(false);
       return;
     }
@@ -96,7 +98,7 @@ const Login: React.FC = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      setMessage({ type: 'success', text: 'تم إنشاء الحساب بنجاح! يرجى تسجيل الدخول' });
+      setMessage({ type: 'success', text: tr('تم إنشاء الحساب بنجاح! يرجى تسجيل الدخول','Account created successfully! Please log in.') });
       
       setTimeout(() => {
         setActiveTab('login');
@@ -171,7 +173,7 @@ const Login: React.FC = () => {
                 }`}
                 onClick={() => setActiveTab('login')}
               >
-                تسجيل الدخول
+                {tr('تسجيل الدخول','Login')}
               </button>
               <button
                 className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
@@ -181,7 +183,7 @@ const Login: React.FC = () => {
                 }`}
                 onClick={() => setActiveTab('register')}
               >
-                إنشاء حساب
+                {tr('إنشاء حساب','Create Account')}
               </button>
             </div>
 
@@ -206,20 +208,20 @@ const Login: React.FC = () => {
               {activeTab === 'login' && (
                 <form onSubmit={handleLogin} className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">مرحباً بك مرة أخرى</h2>
-                    <p className="text-gray-600">سجل دخولك للوصول إلى حسابك</p>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{tr('مرحباً بك مرة أخرى','Welcome back')}</h2>
+                    <p className="text-gray-600">{tr('سجل دخولك للوصول إلى حسابك','Sign in to access your account')}</p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      البريد الإلكتروني
+                      {tr('البريد الإلكتروني','Email')}
                     </label>
                     <div className="relative">
                       <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <input
                         type="text"
                         className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="أدخل بريدك الإلكتروني"
+                        placeholder={tr('أدخل بريدك الإلكتروني','Enter your email')}
                         value={loginForm.email}
                         onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                       />
@@ -228,14 +230,14 @@ const Login: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      كلمة المرور
+                      {tr('كلمة المرور','Password')}
                     </label>
                     <div className="relative">
                       <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <input
                         type={showPassword ? 'text' : 'password'}
                         className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="أدخل كلمة المرور"
+                        placeholder={tr('أدخل كلمة المرور','Enter your password')}
                         value={loginForm.password}
                         onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                       />
@@ -257,10 +259,10 @@ const Login: React.FC = () => {
                         checked={loginForm.rememberMe}
                         onChange={(e) => setLoginForm({ ...loginForm, rememberMe: e.target.checked })}
                       />
-                      <span className="mr-2 text-sm text-gray-600">تذكرني</span>
+                      <span className="mr-2 text-sm text-gray-600">{tr('تذكرني','Remember me')}</span>
                     </label>
                     <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
-                      نسيت كلمة المرور؟
+                      {tr('نسيت كلمة المرور؟','Forgot password?')}
                     </Link>
                   </div>
 
@@ -269,7 +271,7 @@ const Login: React.FC = () => {
                     disabled={isLoading}
                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
                   >
-                    {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+                    {isLoading ? tr('جاري تسجيل الدخول...','Signing in...') : tr('تسجيل الدخول','Login')}
                   </button>
 
                   <div className="text-center">
@@ -284,40 +286,40 @@ const Login: React.FC = () => {
               {activeTab === 'register' && (
                 <form onSubmit={handleRegister} className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">إنشاء حساب جديد</h2>
-                    <p className="text-gray-600">انضم إلينا وابدأ في إدارة تقاريرك</p>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{tr('إنشاء حساب جديد','Create a new account')}</h2>
+                    <p className="text-gray-600">{tr('انضم إلينا وابدأ في إدارة تقاريرك','Join us and start managing your reports')}</p>
                   </div>
 
                   {/* Personal Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 flex items-center">
                       <User className="h-5 w-5 ml-2 text-blue-600" />
-                      المعلومات الشخصية
+                      {tr('المعلومات الشخصية','Personal information')}
                     </h3>
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          الاسم الأول
+                          {tr('الاسم الأول','First name')}
                         </label>
                         <input
                           type="text"
                           required
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="الاسم الأول"
+                          placeholder={tr('الاسم الأول','First name')}
                           value={registerForm.firstName}
                           onChange={(e) => setRegisterForm({ ...registerForm, firstName: e.target.value })}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          الاسم الأخير
+                          {tr('الاسم الأخير','Last name')}
                         </label>
                         <input
                           type="text"
                           required
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="الاسم الأخير"
+                          placeholder={tr('الاسم الأخير','Last name')}
                           value={registerForm.lastName}
                           onChange={(e) => setRegisterForm({ ...registerForm, lastName: e.target.value })}
                         />
@@ -326,7 +328,7 @@ const Login: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        البريد الإلكتروني
+                        {tr('البريد الإلكتروني','Email')}
                       </label>
                       <div className="relative">
                         <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -334,7 +336,7 @@ const Login: React.FC = () => {
                           type="email"
                           required
                           className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="أدخل بريدك الإلكتروني"
+                          placeholder={tr('أدخل بريدك الإلكتروني','Enter your email')}
                           value={registerForm.email}
                           onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
                         />
@@ -343,7 +345,7 @@ const Login: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        رقم الهاتف
+                        {tr('رقم الهاتف','Phone number')}
                       </label>
                       <div className="relative">
                         <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -351,7 +353,7 @@ const Login: React.FC = () => {
                           type="tel"
                           required
                           className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="05xxxxxxxx"
+                          placeholder={tr('05xxxxxxxx','05xxxxxxxx')}
                           value={registerForm.phone}
                           onChange={(e) => setRegisterForm({ ...registerForm, phone: e.target.value })}
                         />
@@ -363,12 +365,12 @@ const Login: React.FC = () => {
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 flex items-center">
                       <Building className="h-5 w-5 ml-2 text-green-600" />
-                      معلومات الشركة
+                      {tr('معلومات الشركة','Company information')}
                     </h3>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        اسم الشركة
+                        {tr('اسم الشركة','Company name')}
                       </label>
                       <input
                         type="text"
@@ -383,29 +385,29 @@ const Login: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          نوع الشركة
+                          {tr('نوع الشركة','Company type')}
                         </label>
                         <select
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                           value={registerForm.companyType}
                           onChange={(e) => setRegisterForm({ ...registerForm, companyType: e.target.value })}
                         >
-                          <option value="عقارية">شركة عقارية</option>
-                          <option value="تقييم">شركة تقييم</option>
-                          <option value="استشارية">شركة استشارية</option>
-                          <option value="تطوير">شركة تطوير</option>
-                          <option value="أخرى">أخرى</option>
+                          <option value="عقارية">{tr('شركة عقارية','Real estate company')}</option>
+                          <option value="تقييم">{tr('شركة تقييم','Valuation company')}</option>
+                          <option value="استشارية">{tr('شركة استشارية','Consulting company')}</option>
+                          <option value="تطوير">{tr('شركة تطوير','Development company')}</option>
+                          <option value="أخرى">{tr('أخرى','Other')}</option>
                         </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          رقم الترخيص
+                          {tr('رقم الترخيص','License number')}
                         </label>
                         <input
                           type="text"
                           required
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="رقم الترخيص"
+                          placeholder={tr('رقم الترخيص','License number')}
                           value={registerForm.licenseNumber}
                           onChange={(e) => setRegisterForm({ ...registerForm, licenseNumber: e.target.value })}
                         />
@@ -414,7 +416,7 @@ const Login: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        المدينة
+                        {tr('المدينة','City')}
                       </label>
                       <div className="relative">
                         <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -423,7 +425,7 @@ const Login: React.FC = () => {
                           value={registerForm.city}
                           onChange={(e) => setRegisterForm({ ...registerForm, city: e.target.value })}
                         >
-                          <option value="">اختر المدينة</option>
+                          <option value="">{tr('اختر المدينة','Choose a city')}</option>
                           <option value="الرياض">الرياض</option>
                           <option value="جدة">جدة</option>
                           <option value="الدمام">الدمام</option>
@@ -443,12 +445,12 @@ const Login: React.FC = () => {
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 flex items-center">
                       <Lock className="h-5 w-5 ml-2 text-purple-600" />
-                      معلومات الحساب
+                      {tr('معلومات الحساب','Account information')}
                     </h3>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        كلمة المرور
+                        {tr('كلمة المرور','Password')}
                       </label>
                       <div className="relative">
                         <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -456,7 +458,7 @@ const Login: React.FC = () => {
                           type={showPassword ? 'text' : 'password'}
                           required
                           className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="أدخل كلمة المرور"
+                          placeholder={tr('أدخل كلمة المرور','Enter your password')}
                           value={registerForm.password}
                           onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                         />
@@ -472,7 +474,7 @@ const Login: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        تأكيد كلمة المرور
+                        {tr('تأكيد كلمة المرور','Confirm password')}
                       </label>
                       <div className="relative">
                         <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -480,7 +482,7 @@ const Login: React.FC = () => {
                           type={showConfirmPassword ? 'text' : 'password'}
                           required
                           className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="أعد إدخال كلمة المرور"
+                          placeholder={tr('أعد إدخال كلمة المرور','Re-enter your password')}
                           value={registerForm.confirmPassword}
                           onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
                         />
@@ -506,13 +508,13 @@ const Login: React.FC = () => {
                         onChange={(e) => setRegisterForm({ ...registerForm, agreeToTerms: e.target.checked })}
                       />
                       <span className="mr-2 text-sm text-gray-600">
-                        أوافق على{' '}
+                        {tr('أوافق على','I agree to')}{' '}
                         <Link to="/terms" className="text-blue-600 hover:text-blue-500">
-                          الشروط والأحكام
+                          {tr('الشروط والأحكام','Terms & Conditions')}
                         </Link>
                         {' '}و{' '}
                         <Link to="/privacy" className="text-blue-600 hover:text-blue-500">
-                          سياسة الخصوصية
+                          {tr('سياسة الخصوصية','Privacy Policy')}
                         </Link>
                       </span>
                     </label>
@@ -525,7 +527,7 @@ const Login: React.FC = () => {
                         onChange={(e) => setRegisterForm({ ...registerForm, subscribeNewsletter: e.target.checked })}
                       />
                       <span className="mr-2 text-sm text-gray-600">
-                        أرغب في تلقي النشرة الإخبارية والتحديثات
+                        {tr('أرغب في تلقي النشرة الإخبارية والتحديثات','I want to receive the newsletter and updates')}
                       </span>
                     </label>
                   </div>
@@ -535,7 +537,7 @@ const Login: React.FC = () => {
                     disabled={isLoading}
                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
                   >
-                    {isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء الحساب'}
+                    {isLoading ? tr('جاري إنشاء الحساب...','Creating account...') : tr('إنشاء الحساب','Create account')}
                   </button>
                 </form>
               )}
@@ -547,8 +549,8 @@ const Login: React.FC = () => {
             <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <FileText className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">نظام التقارير العقارية</h1>
-            <p className="text-gray-600">منصة متكاملة لإدارة وإرسال تقارير العقارات</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{tr('نظام التقارير العقارية','Real Estate Reports System')}</h1>
+            <p className="text-gray-600">{tr('منصة متكاملة لإدارة وإرسال تقارير العقارات','An integrated platform for managing and sending real estate reports')}</p>
           </div>
         </div>
       </div>

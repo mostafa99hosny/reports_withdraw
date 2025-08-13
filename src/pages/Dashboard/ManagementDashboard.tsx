@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, BarChart, ChevronDown, Check, Edit, Filter, FileText, MessageSquare, MoreHorizontal, Phone, Plus, Search, Mail, Users, Package, Building, Briefcase, Eye, EyeOff, Trash2, X, Save } from 'lucide-react';
+import { useTr, useLanguage } from '../../context/LanguageContext';
 // Define types for our data
 interface User {
   id: number;
@@ -223,7 +224,7 @@ const companies: Company[] = [{
 }];
 // Get all users from all companies
 const getAllUsers = () => {
-  return companies.flatMap(company => 
+  return companies.flatMap(company =>
     company.users.map(user => ({
       ...user,
       companyName: company.name,
@@ -447,6 +448,8 @@ const supportTickets: SupportTicket[] = [{
   }]
 }];
 const ManagementDashboard: React.FC = () => {
+  const tr = useTr();
+  const { lang } = useLanguage();
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [showTicketFilter, setShowTicketFilter] = useState(false);
@@ -458,30 +461,30 @@ const ManagementDashboard: React.FC = () => {
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // Get all users from companies
   const allUsers = getAllUsers();
   // Format date time helper
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString('ar-SA');
+    return date.toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-US');
   };
   // Filtered tickets based on search term
   const filteredTickets = supportTickets.filter(ticket => ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) || ticket.company.toLowerCase().includes(searchTerm.toLowerCase()));
   // Filtered companies based on search term
-  const filteredCompanies = companies.filter(company => 
-    company.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredCompanies = companies.filter(company =>
+    company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     company.package.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    company.users.some(user => 
+    company.users.some(user =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
-  
+
   // Filtered users based on search term
-  const filteredUsers = allUsers.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredUsers = allUsers.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.companyName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
   // Render the overview tab
@@ -492,7 +495,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-gray-500">
-                  إجمالي الشركات
+                  {tr('إجمالي الشركات','Total companies')}
                 </p>
                 <h3 className="text-2xl font-semibold text-gray-900 mt-1">
                   {companies.length}
@@ -505,7 +508,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="mt-4">
               <span className="text-sm text-green-600 font-medium">+12%</span>
               <span className="text-sm text-gray-500 mr-1">
-                من الشهر الماضي
+                {tr('من الشهر الماضي','since last month')}
               </span>
             </div>
           </div>
@@ -513,7 +516,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-gray-500">
-                  إجمالي المستخدمين
+                  {tr('إجمالي المستخدمين','Total users')}
                 </p>
                 <h3 className="text-2xl font-semibold text-gray-900 mt-1">
                   {allUsers.length}
@@ -526,7 +529,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="mt-4">
               <span className="text-sm text-green-600 font-medium">+8%</span>
               <span className="text-sm text-gray-500 mr-1">
-                من الشهر الماضي
+                {tr('من الشهر الماضي','since last month')}
               </span>
             </div>
           </div>
@@ -534,7 +537,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-gray-500">
-                  إجمالي الاشتراكات
+                  {tr('إجمالي الاشتراكات','Active subscriptions')}
                 </p>
                 <h3 className="text-2xl font-semibold text-gray-900 mt-1">
                   {companies.filter(c => c.status === 'نشط').length}
@@ -547,7 +550,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="mt-4">
               <span className="text-sm text-green-600 font-medium">+5%</span>
               <span className="text-sm text-gray-500 mr-1">
-                من الشهر الماضي
+                {tr('من الشهر الماضي','since last month')}
               </span>
             </div>
           </div>
@@ -555,7 +558,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-gray-500">
-                  التذاكر المفتوحة
+                  {tr('التذاكر المفتوحة','Open tickets')}
                 </p>
                 <h3 className="text-2xl font-semibold text-gray-900 mt-1">
                   {supportTickets.filter(t => t.status === 'مفتوح').length}
@@ -568,7 +571,7 @@ const ManagementDashboard: React.FC = () => {
             <div className="mt-4">
               <span className="text-sm text-red-600 font-medium">+15%</span>
               <span className="text-sm text-gray-500 mr-1">
-                من الشهر الماضي
+                {tr('من الشهر الماضي','since last month')}
               </span>
             </div>
           </div>
@@ -576,23 +579,23 @@ const ManagementDashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              أحدث الشركات
+              {tr('أحدث الشركات','Latest companies')}
             </h3>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      الشركة
+                      {tr('الشركة','Company')}
                     </th>
                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      المستخدمين
+                      {tr('المستخدمين','Users')}
                     </th>
                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      الباقة
+                      {tr('الباقة','Package')}
                     </th>
                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      الحالة
+                      {tr('الحالة','Status')}
                     </th>
                   </tr>
                 </thead>
@@ -630,13 +633,13 @@ const ManagementDashboard: React.FC = () => {
             </div>
             <div className="mt-4 flex justify-center">
               <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                عرض جميع الشركات
+                {tr('عرض جميع الشركات','View all companies')}
               </button>
             </div>
           </div>
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              أحدث التذاكر
+              {tr('أحدث التذاكر','Latest tickets')}
             </h3>
             <div className="space-y-4">
               {supportTickets.slice(0, 3).map(ticket => <div key={ticket.id} className="p-3 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
@@ -654,14 +657,14 @@ const ManagementDashboard: React.FC = () => {
                       {formatDateTime(ticket.createdAt)}
                     </span>
                     <button className="text-blue-600 hover:text-blue-800 text-xs">
-                      عرض التفاصيل
+                      {tr('عرض التفاصيل','View details')}
                     </button>
                   </div>
                 </div>)}
             </div>
             <div className="mt-4 flex justify-center">
               <button className="text-blue-600 hover:text-blue-800 text-sm font-medium" onClick={() => setActiveTab('support')}>
-                عرض جميع التذاكر
+                {tr('عرض جميع التذاكر','View all tickets')}
               </button>
             </div>
           </div>
@@ -677,14 +680,14 @@ const ManagementDashboard: React.FC = () => {
             <input type="text" placeholder="البحث في الشركات والمستخدمين..." className="w-full md:w-64 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
           </div>
           <div className="flex gap-2">
-            <button 
+            <button
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
               onClick={() => setShowModal('addUser')}
             >
               <Plus className="h-4 w-4 ml-2" />
               إضافة مستخدم
             </button>
-            <button 
+            <button
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
               onClick={() => setShowModal('addCompany')}
             >
@@ -693,12 +696,12 @@ const ManagementDashboard: React.FC = () => {
             </button>
           </div>
         </div>
-        
+
         <div className="space-y-4">
           {filteredCompanies.map(company => (
             <div key={company.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               {/* Company Header */}
-              <div 
+              <div
                 className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={() => setExpandedCompany(expandedCompany === company.id ? null : company.id)}
               >
@@ -724,7 +727,7 @@ const ManagementDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <button 
+                    <button
                       className="text-blue-600 hover:text-blue-900 px-3 py-1 text-sm"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -734,7 +737,7 @@ const ManagementDashboard: React.FC = () => {
                     >
                       تعديل الشركة
                     </button>
-                    <button 
+                    <button
                       className="text-green-600 hover:text-green-900 px-3 py-1 text-sm"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -744,15 +747,15 @@ const ManagementDashboard: React.FC = () => {
                     >
                       إضافة مستخدم
                     </button>
-                    <ChevronDown 
+                    <ChevronDown
                       className={`h-5 w-5 text-gray-400 transition-transform ${
                         expandedCompany === company.id ? 'rotate-180' : ''
-                      }`} 
+                      }`}
                     />
                   </div>
                 </div>
               </div>
-              
+
               {/* Users List */}
               {expandedCompany === company.id && (
                 <div className="border-t border-gray-200 bg-gray-50">
@@ -783,7 +786,7 @@ const ManagementDashboard: React.FC = () => {
                                 {user.status}
                               </span>
                               <div className="flex space-x-1">
-                                <button 
+                                <button
                                   className="text-blue-600 hover:text-blue-900 text-sm"
                                   onClick={() => {
                                     setSelectedUser(user);
@@ -793,7 +796,7 @@ const ManagementDashboard: React.FC = () => {
                                 >
                                   تعديل
                                 </button>
-                                <button 
+                                <button
                                   className="text-red-600 hover:text-red-900 text-sm"
                                   onClick={() => {
                                     if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
@@ -836,7 +839,7 @@ const ManagementDashboard: React.FC = () => {
     return <div>
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-medium text-gray-900">الباقات المتاحة</h3>
-          <button 
+          <button
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
             onClick={() => setShowModal('addPackage')}
           >
@@ -887,7 +890,7 @@ const ManagementDashboard: React.FC = () => {
                 </div>
                 <div className="mt-6 flex justify-between items-center">
                   <div className="flex space-x-2">
-                    <button 
+                    <button
                       className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
                       onClick={() => {
                         setSelectedPackage(pkg);
@@ -896,7 +899,7 @@ const ManagementDashboard: React.FC = () => {
                     >
                       تعديل
                     </button>
-                    <button 
+                    <button
                       className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                       onClick={() => {
                         if (confirm('هل أنت متأكد من حذف هذه الباقة؟')) {
@@ -1037,7 +1040,7 @@ const ManagementDashboard: React.FC = () => {
     const highPriorityTickets = supportTickets.filter(t => t.priority === 'عالي').length;
     const unassignedTickets = supportTickets.filter(t => !t.assignedTo).length;
     const avgResponseTime = '2.5'; // This would be calculated from actual data
-    
+
     return <div>
         {/* Support Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
@@ -1054,7 +1057,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -1068,7 +1071,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -1082,7 +1085,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -1096,7 +1099,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -1110,7 +1113,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -1228,12 +1231,12 @@ const ManagementDashboard: React.FC = () => {
                 {filteredTickets.map(ticket => {
                   const firstMessage = ticket.messages && ticket.messages.length > 0 ? ticket.messages[0] : null;
                   const lastMessage = ticket.messages && ticket.messages.length > 0 ? ticket.messages[ticket.messages.length - 1] : null;
-                  
+
                   return <tr key={ticket.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="text-sm font-medium text-gray-900">#{ticket.id}</div>
-                        {ticket.messages && ticket.messages.some(m => m.senderRole === 'user' && new Date(m.timestamp) > new Date(Date.now() - 24*60*60*1000)) && 
+                        {ticket.messages && ticket.messages.some(m => m.senderRole === 'user' && new Date(m.timestamp) > new Date(Date.now() - 24*60*60*1000)) &&
                           <div className="mr-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" title="رد جديد"></div>
                         }
                       </div>
@@ -1315,8 +1318,8 @@ const ManagementDashboard: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2 space-x-reverse">
-                        <button 
-                          className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded text-sm font-medium transition-colors" 
+                        <button
+                          className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded text-sm font-medium transition-colors"
                           onClick={() => setViewingTicket(ticket.id)}
                         >
                           عرض التفاصيل
@@ -1377,7 +1380,7 @@ const ManagementDashboard: React.FC = () => {
                   <div className="text-xs text-gray-500">متوسط الرد: 1.2 ساعة</div>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
@@ -1393,7 +1396,7 @@ const ManagementDashboard: React.FC = () => {
                   <div className="text-xs text-gray-500">متوسط الرد: 3.5 ساعة</div>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
@@ -1409,7 +1412,7 @@ const ManagementDashboard: React.FC = () => {
                   <div className="text-xs text-gray-500">متوسط الرد: 2.1 ساعة</div>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
@@ -1427,7 +1430,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">إحصائيات الأداء</h3>
             <div className="space-y-4">
@@ -1456,7 +1459,7 @@ const ManagementDashboard: React.FC = () => {
                 <span className="text-sm font-medium text-gray-900">45</span>
               </div>
             </div>
-            
+
             <div className="mt-6 pt-4 border-t border-gray-200">
               <h4 className="text-sm font-medium text-gray-900 mb-3">توزيع التذاكر حسب النوع</h4>
               <div className="space-y-2">
@@ -1524,7 +1527,7 @@ const ManagementDashboard: React.FC = () => {
           {activeTab === 'support' && renderSupportTab()}
         </div>
       </div>
-      
+
       {/* Add Company Modal */}
       {showModal === 'addCompany' && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -1538,34 +1541,34 @@ const ManagementDashboard: React.FC = () => {
             <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">اسم الشركة</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل اسم الشركة" 
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل اسم الشركة"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني للتواصل</label>
-                <input 
-                  type="email" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل البريد الإلكتروني" 
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل البريد الإلكتروني"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
-                <input 
-                  type="tel" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل رقم الهاتف" 
+                <input
+                  type="tel"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل رقم الهاتف"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الشخص المسؤول</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل اسم الشخص المسؤول" 
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل اسم الشخص المسؤول"
                 />
               </div>
               <div>
@@ -1578,14 +1581,14 @@ const ManagementDashboard: React.FC = () => {
                 </select>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(null)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
@@ -1610,39 +1613,39 @@ const ManagementDashboard: React.FC = () => {
             <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">اسم الشركة</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedCompany.name}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني للتواصل</label>
-                <input 
-                  type="email" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedCompany.contactEmail}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
-                <input 
-                  type="tel" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                <input
+                  type="tel"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedCompany.contactPhone}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الشخص المسؤول</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedCompany.contactPerson}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الباقة</label>
-                <select 
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedCompany.package}
                 >
@@ -1653,7 +1656,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الحالة</label>
-                <select 
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedCompany.status}
                 >
@@ -1663,14 +1666,14 @@ const ManagementDashboard: React.FC = () => {
                 </select>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(null)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
@@ -1704,27 +1707,27 @@ const ManagementDashboard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل الاسم الكامل" 
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل الاسم الكامل"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-                <input 
-                  type="email" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل البريد الإلكتروني" 
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل البريد الإلكتروني"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
                 <div className="relative">
-                  <input 
+                  <input
                     type={showPassword ? 'text' : 'password'}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10" 
-                    placeholder="أدخل كلمة المرور" 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+                    placeholder="أدخل كلمة المرور"
                   />
                   <button
                     type="button"
@@ -1768,14 +1771,14 @@ const ManagementDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(null)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
@@ -1800,27 +1803,27 @@ const ManagementDashboard: React.FC = () => {
             <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل الاسم الكامل" 
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل الاسم الكامل"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-                <input 
-                  type="email" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="أدخل البريد الإلكتروني" 
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل البريد الإلكتروني"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
                 <div className="relative">
-                  <input 
+                  <input
                     type={showPassword ? 'text' : 'password'}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10" 
-                    placeholder="أدخل كلمة المرور" 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+                    placeholder="أدخل كلمة المرور"
                   />
                   <button
                     type="button"
@@ -1864,14 +1867,14 @@ const ManagementDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(null)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
@@ -1896,23 +1899,23 @@ const ManagementDashboard: React.FC = () => {
             <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedUser.name}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-                <input 
-                  type="email" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedUser.email}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الدور</label>
-                <select 
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedUser.role}
                 >
@@ -1925,7 +1928,7 @@ const ManagementDashboard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الحالة</label>
-                <select 
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedUser.status}
                 >
@@ -1938,32 +1941,32 @@ const ManagementDashboard: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">الصلاحيات</label>
                 <div className="space-y-2">
                   <label className="flex items-center">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       defaultChecked={selectedUser.permissions?.includes('عرض التقارير')}
                     />
                     <span className="mr-2 text-sm text-gray-700">عرض التقارير</span>
                   </label>
                   <label className="flex items-center">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       defaultChecked={selectedUser.permissions?.includes('إدارة التقارير')}
                     />
                     <span className="mr-2 text-sm text-gray-700">إدارة التقارير</span>
                   </label>
                   <label className="flex items-center">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       defaultChecked={selectedUser.permissions?.includes('إدارة المستخدمين')}
                     />
                     <span className="mr-2 text-sm text-gray-700">إدارة المستخدمين</span>
                   </label>
                   <label className="flex items-center">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       defaultChecked={selectedUser.permissions?.includes('إدارة الاشتراك')}
                     />
@@ -1972,14 +1975,14 @@ const ManagementDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(null)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
@@ -2005,18 +2008,18 @@ const ManagementDashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">اسم الباقة</label>
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="أدخل اسم الباقة" 
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="أدخل اسم الباقة"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">السعر (ريال سعودي)</label>
-                  <input 
-                    type="number" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="أدخل السعر" 
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="أدخل السعر"
                   />
                 </div>
               </div>
@@ -2033,67 +2036,67 @@ const ManagementDashboard: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">عدد المستخدمين</label>
-                  <input 
-                    type="number" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="عدد المستخدمين المسموح" 
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="عدد المستخدمين المسموح"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">عدد التقارير</label>
-                  <input 
-                    type="number" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="عدد التقارير المسموح" 
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="عدد التقارير المسموح"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">مساحة التخزين</label>
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="مثال: 10GB" 
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="مثال: 10GB"
                   />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">الميزات</label>
                 <div className="space-y-2">
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="أدخل ميزة" 
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="أدخل ميزة"
                   />
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="أدخل ميزة أخرى" 
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="أدخل ميزة أخرى"
                   />
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="أدخل ميزة أخرى" 
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="أدخل ميزة أخرى"
                   />
                 </div>
               </div>
               <div className="flex items-center">
-                <input 
-                  type="checkbox" 
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="mr-2 text-sm text-gray-700">الباقة الأكثر شيوعاً</span>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(null)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
@@ -2119,17 +2122,17 @@ const ManagementDashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">اسم الباقة</label>
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     defaultValue={selectedPackage.name}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">السعر (ريال سعودي)</label>
-                  <input 
-                    type="number" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     defaultValue={selectedPackage.price}
                   />
                 </div>
@@ -2137,7 +2140,7 @@ const ManagementDashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">فترة الاشتراك</label>
-                  <select 
+                  <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     defaultValue={selectedPackage.period}
                   >
@@ -2149,9 +2152,9 @@ const ManagementDashboard: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">عدد المستخدمين</label>
-                  <input 
-                    type="number" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     defaultValue={selectedPackage.usersLimit}
                   />
                 </div>
@@ -2159,24 +2162,24 @@ const ManagementDashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">عدد التقارير</label>
-                  <input 
-                    type="number" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     defaultValue={selectedPackage.reportsLimit}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">مساحة التخزين</label>
-                  <input 
-                    type="text" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     defaultValue={selectedPackage.storageLimit}
                   />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">الحالة</label>
-                <select 
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   defaultValue={selectedPackage.status}
                 >
@@ -2188,32 +2191,32 @@ const ManagementDashboard: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">الميزات</label>
                 <div className="space-y-2">
                   {selectedPackage.features.map((feature, index) => (
-                    <input 
+                    <input
                       key={index}
-                      type="text" 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       defaultValue={feature}
                     />
                   ))}
                 </div>
               </div>
               <div className="flex items-center">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   defaultChecked={selectedPackage.popularChoice}
                 />
                 <span className="mr-2 text-sm text-gray-700">الباقة الأكثر شيوعاً</span>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(null)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
+import { useTr } from '../../context/LanguageContext';
 
 const ForgotPassword: React.FC = () => {
+  const tr = useTr();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
@@ -18,14 +21,14 @@ const ForgotPassword: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setIsEmailSent(true);
-      setMessage({ 
-        type: 'success', 
-        text: 'تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني' 
+      setMessage({
+        type: 'success',
+        text: 'RESET_LINK_SENT'
       });
     } catch (error) {
-      setMessage({ 
-        type: 'error', 
-        text: 'حدث خطأ أثناء إرسال البريد الإلكتروني. يرجى المحاولة مرة أخرى' 
+      setMessage({
+        type: 'error',
+        text: 'RESET_LINK_ERROR'
       });
     } finally {
       setIsLoading(false);
@@ -42,7 +45,7 @@ const ForgotPassword: React.FC = () => {
               <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <FileText className="h-8 w-8 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">استعادة كلمة المرور</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">{tr('استعادة كلمة المرور','Reset password')}</h1>
               <p className="text-gray-600">
                 {!isEmailSent 
                   ? 'أدخل بريدك الإلكتروني وسنرسل لك رابط استعادة كلمة المرور'
@@ -63,7 +66,11 @@ const ForgotPassword: React.FC = () => {
                 ) : (
                   <AlertCircle className="h-5 w-5 ml-2" />
                 )}
-                {message.text}
+                {message.text === 'RESET_LINK_SENT'
+                  ? tr('تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني','A password reset link has been sent to your email')
+                  : message.text === 'RESET_LINK_ERROR'
+                    ? tr('حدث خطأ أثناء إرسال البريد الإلكتروني. يرجى المحاولة مرة أخرى','An error occurred while sending the email. Please try again')
+                    : message.text}
               </div>
             )}
 
@@ -92,7 +99,7 @@ const ForgotPassword: React.FC = () => {
                   disabled={isLoading}
                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
                 >
-                  {isLoading ? 'جاري الإرسال...' : 'إرسال رابط الاستعادة'}
+                  {isLoading ? tr('جاري الإرسال...','Sending...') : tr('إرسال رابط الاستعادة','Send reset link')}
                 </button>
               </form>
             ) : (
@@ -103,9 +110,9 @@ const ForgotPassword: React.FC = () => {
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">تم إرسال البريد الإلكتروني!</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{tr('تم إرسال البريد الإلكتروني!','Email sent!')}</h3>
                   <p className="text-gray-600 mb-4">
-                    لقد أرسلنا رابط استعادة كلمة المرور إلى:
+                    {tr('لقد أرسلنا رابط استعادة كلمة المرور إلى:','We have sent a password reset link to:')}
                   </p>
                   <p className="font-medium text-blue-600 bg-blue-50 py-2 px-4 rounded-lg">
                     {email}
@@ -115,9 +122,9 @@ const ForgotPassword: React.FC = () => {
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-right">
                   <h4 className="font-medium text-yellow-800 mb-2">تعليمات مهمة:</h4>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    <li>• تحقق من صندوق الوارد وصندوق الرسائل المزعجة</li>
-                    <li>• الرابط صالح لمدة 24 ساعة فقط</li>
-                    <li>• إذا لم تستلم البريد خلال 5 دقائق، جرب مرة أخرى</li>
+                    <li>• {tr('تحقق من صندوق الوارد وصندوق الرسائل المزعجة','Check your Inbox and Spam folders')}</li>
+                    <li>• {tr('الرابط صالح لمدة 24 ساعة فقط','The link is valid for 24 hours only')}</li>
+                    <li>• {tr('إذا لم تستلم البريد خلال 5 دقائق، جرب مرة أخرى','If you don\'t receive the email within 5 minutes, try again')}</li>
                   </ul>
                 </div>
 
@@ -129,7 +136,7 @@ const ForgotPassword: React.FC = () => {
                   }}
                   className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 font-medium"
                 >
-                  إرسال إلى بريد آخر
+                  {tr('إرسال إلى بريد آخر','Send to another email')}
                 </button>
               </div>
             )}
@@ -141,7 +148,7 @@ const ForgotPassword: React.FC = () => {
                 className="inline-flex items-center text-blue-600 hover:text-blue-500 font-medium"
               >
                 <ArrowLeft className="h-4 w-4 ml-1" />
-                العودة إلى تسجيل الدخول
+                {tr('العودة إلى تسجيل الدخول','Back to login')}
               </Link>
             </div>
           </div>
@@ -150,19 +157,19 @@ const ForgotPassword: React.FC = () => {
         {/* Help Section */}
         <div className="mt-8 text-center">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-            <h3 className="font-medium text-gray-900 mb-2">تحتاج مساعدة؟</h3>
+            <h3 className="font-medium text-gray-900 mb-2">{tr('تحتاج مساعدة؟','Need help?')}</h3>
             <p className="text-sm text-gray-600 mb-4">
-              إذا كنت تواجه مشاكل في استعادة كلمة المرور، تواصل معنا
+              {tr('إذا كنت تواجه مشاكل في استعادة كلمة المرور، تواصل معنا','If you are having trouble resetting your password, contact us')}
             </p>
             <div className="space-y-2 text-sm">
               <p className="text-gray-600">
-                📧 البريد الإلكتروني: <span className="text-blue-600">support@reports.com</span>
+                📧 {tr('البريد الإلكتروني:','Email:')} <span className="text-blue-600">support@reports.com</span>
               </p>
               <p className="text-gray-600">
-                📞 الهاتف: <span className="text-blue-600">920001234</span>
+                📞 {tr('الهاتف:','Phone:')} <span className="text-blue-600">920001234</span>
               </p>
               <p className="text-gray-600">
-                🕒 أوقات العمل: الأحد - الخميس (9ص - 6م)
+                🕒 {tr('أوقات العمل: الأحد - الخميس (9ص - 6م)','Working hours: Sun - Thu (9am - 6pm)')}
               </p>
             </div>
           </div>

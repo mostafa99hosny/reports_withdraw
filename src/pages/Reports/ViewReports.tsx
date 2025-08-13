@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Search, FileText, FileSpreadsheet, Check, AlertTriangle, Clock, Upload, Eye, Filter, ChevronDown, Calendar, User, Building, TrendingUp, Activity, CheckCircle, XCircle, AlertCircle, X, Download, MapPin, DollarSign, Users2, Timer, HardDrive, BarChart3 } from 'lucide-react';
 import Table from '../../components/Common/Table';
+import { useTr, useLanguage } from '../../context/LanguageContext';
 const ViewReports: React.FC = () => {
+  const tr = useTr();
+  const { lang } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilter, setShowFilter] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('الكل');
@@ -183,7 +186,8 @@ const ViewReports: React.FC = () => {
   // Helper functions
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    const locale = lang === 'ar' ? 'ar-SA' : 'en-US';
+    return date.toLocaleDateString(locale) + ' ' + date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   };
 
   const openReportDetails = (report: any) => {
@@ -231,8 +235,8 @@ const ViewReports: React.FC = () => {
 
   return <div className="w-full">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">عرض التقارير</h1>
-        <p className="text-gray-600">تتبع ومراقبة تقارير العقارات من نظام مقياس</p>
+        <h1 className="text-2xl font-bold text-gray-900">{tr('عرض التقارير','View Reports')}</h1>
+        <p className="text-gray-600">{tr('تتبع ومراقبة تقارير العقارات من نظام مقياس','Track and monitor real estate reports from Mekyas')}</p>
       </div>
 
       {/* Statistics Cards */}
@@ -245,7 +249,7 @@ const ViewReports: React.FC = () => {
               </div>
             </div>
             <div className="mr-4">
-              <div className="text-sm font-medium text-gray-500">إجمالي التقارير</div>
+              <div className="text-sm font-medium text-gray-500">{tr('إجمالي التقارير','Total reports')}</div>
               <div className="text-2xl font-bold text-gray-900">{totalReports}</div>
             </div>
           </div>
@@ -259,7 +263,7 @@ const ViewReports: React.FC = () => {
               </div>
             </div>
             <div className="mr-4">
-              <div className="text-sm font-medium text-gray-500">مكتملة</div>
+              <div className="text-sm font-medium text-gray-500">{tr('مكتملة','Completed')}</div>
               <div className="text-2xl font-bold text-green-600">{completedReports}</div>
             </div>
           </div>
@@ -273,7 +277,7 @@ const ViewReports: React.FC = () => {
               </div>
             </div>
             <div className="mr-4">
-              <div className="text-sm font-medium text-gray-500">بها أخطاء</div>
+              <div className="text-sm font-medium text-gray-500">{tr('بها أخطاء','With errors')}</div>
               <div className="text-2xl font-bold text-red-600">{errorReports}</div>
             </div>
           </div>
@@ -287,7 +291,7 @@ const ViewReports: React.FC = () => {
               </div>
             </div>
             <div className="mr-4">
-              <div className="text-sm font-medium text-gray-500">قيد المعالجة</div>
+              <div className="text-sm font-medium text-gray-500">{tr('قيد المعالجة','Processing')}</div>
               <div className="text-2xl font-bold text-amber-600">{processingReports}</div>
             </div>
           </div>
@@ -299,7 +303,7 @@ const ViewReports: React.FC = () => {
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-500">إجمالي الحجم</div>
+              <div className="text-sm text-gray-500">{tr('إجمالي الحجم','Total size')}</div>
               <div className="text-lg font-semibold text-gray-900">{totalSize.toFixed(1)} MB</div>
             </div>
             <TrendingUp className="h-8 w-8 text-blue-500" />
@@ -309,7 +313,7 @@ const ViewReports: React.FC = () => {
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-500">إجمالي التحميلات</div>
+              <div className="text-sm text-gray-500">{tr('إجمالي التحميلات','Total downloads')}</div>
               <div className="text-lg font-semibold text-gray-900">{totalDownloads}</div>
             </div>
             <Activity className="h-8 w-8 text-green-500" />
@@ -319,7 +323,7 @@ const ViewReports: React.FC = () => {
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-500">إجمالي السجلات</div>
+              <div className="text-sm text-gray-500">{tr('إجمالي السجلات','Total records')}</div>
               <div className="text-lg font-semibold text-gray-900">{totalRecords}</div>
             </div>
             <Building className="h-8 w-8 text-purple-500" />
@@ -331,14 +335,14 @@ const ViewReports: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h2 className="text-lg font-medium text-gray-900">تفاصيل التقارير</h2>
+            <h2 className="text-lg font-medium text-gray-900">{tr('تفاصيل التقارير','Report details')}</h2>
             
             <div className="flex flex-col md:flex-row gap-4">
               <div className="relative">
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input 
                   type="text" 
-                  placeholder="البحث في التقارير..." 
+                  placeholder={tr('البحث في التقارير...','Search reports...')}
                   className="w-full md:w-64 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                   value={searchTerm} 
                   onChange={e => setSearchTerm(e.target.value)} 
@@ -351,7 +355,7 @@ const ViewReports: React.FC = () => {
                   onClick={() => setShowFilter(!showFilter)}
                 >
                   <Filter className="h-4 w-4 ml-2" />
-                  تصفية
+                  {tr('تصفية','Filter')}
                   <ChevronDown className="h-4 w-4 mr-2" />
                 </button>
                 
@@ -359,28 +363,28 @@ const ViewReports: React.FC = () => {
                   <div className="absolute left-0 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                     <div className="py-1">
                       <div className="px-4 py-2 text-sm text-gray-700">
-                        <div className="mb-2 font-medium">الحالة</div>
+                        <div className="mb-2 font-medium">{tr('الحالة','Status')}</div>
                         <select 
                           className="w-full border border-gray-300 rounded px-2 py-1"
                           value={selectedStatus}
                           onChange={(e) => setSelectedStatus(e.target.value)}
                         >
-                          <option value="الكل">جميع الحالات</option>
-                          <option value="مكتمل">مكتمل</option>
-                          <option value="قيد المعالجة">قيد المعالجة</option>
-                          <option value="خطأ في البيانات">خطأ في البيانات</option>
-                          <option value="فشل في الرفع">فشل في الرفع</option>
+                          <option value="الكل">{tr('جميع الحالات','All statuses')}</option>
+                          <option value="مكتمل">{tr('مكتمل','Completed')}</option>
+                          <option value="قيد المعالجة">{tr('قيد المعالجة','Processing')}</option>
+                          <option value="خطأ في البيانات">{tr('خطأ في البيانات','Data error')}</option>
+                          <option value="فشل في الرفع">{tr('فشل في الرفع','Upload failed')}</option>
                         </select>
                       </div>
                       
                       <div className="px-4 py-2 text-sm text-gray-700">
-                        <div className="mb-2 font-medium">نوع الملف</div>
+                        <div className="mb-2 font-medium">{tr('نوع الملف','File type')}</div>
                         <select 
                           className="w-full border border-gray-300 rounded px-2 py-1"
                           value={selectedType}
                           onChange={(e) => setSelectedType(e.target.value)}
                         >
-                          <option value="الكل">جميع الأنواع</option>
+                          <option value="الكل">{tr('جميع الأنواع','All types')}</option>
                           <option value="PDF">PDF</option>
                           <option value="XLSX">Excel</option>
                         </select>

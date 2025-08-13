@@ -3,9 +3,12 @@ import { FileText, Upload, Check, AlertTriangle, Search, ChevronLeft, ArrowLeft,
 import { useNavigate } from 'react-router-dom';
 import Table from '../../components/Common/Table';
 import ProgressBar from '../../components/Common/ProgressBar';
+import { useTr, useLanguage } from '../../context/LanguageContext';
 // Define workflow steps
 type WorkflowStep = 'select' | 'verify' | 'send' | 'result';
 const MekyasReports: React.FC = () => {
+  const tr = useTr();
+  const { lang } = useLanguage();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'automatic' | 'single' | 'manual'>('automatic');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -38,20 +41,20 @@ const MekyasReports: React.FC = () => {
         navigate('/auth/mekyas');
         return;
       }
-      
+
       try {
         const auth = JSON.parse(authData);
         // Check if token is still valid (24 hours)
         const loginTime = new Date(auth.loginTime);
         const now = new Date();
         const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
-        
+
         if (hoursDiff > 24) {
           localStorage.removeItem('mekyasAuth');
           navigate('/auth/mekyas');
           return;
         }
-        
+
         // Set last update time from localStorage if exists
         const lastUpdate = localStorage.getItem('mekyasLastUpdate');
         if (lastUpdate) {
@@ -72,9 +75,9 @@ const MekyasReports: React.FC = () => {
     try {
       // Simulate API call to Mekyas to fetch latest reports
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
+
       // Update last update time
-      const now = new Date().toLocaleString('ar-SA', {
+      const now = new Date().toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-US', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -83,10 +86,10 @@ const MekyasReports: React.FC = () => {
       });
       setLastUpdateTime(now);
       localStorage.setItem('mekyasLastUpdate', now);
-      
+
       // Here you would normally update the reportData state with new data
       // For demo purposes, we'll just show success
-      
+
     } catch (error) {
       console.error('Error updating reports:', error);
     } finally {
@@ -232,7 +235,7 @@ const MekyasReports: React.FC = () => {
     department: 'قسم العقارات'
   }];
   const columns = [{
-    header: 'الرقم',
+    header: tr('الرقم','ID'),
     accessor: 'id',
     render: (value: number) => (
       <span className="font-medium text-gray-900">{value}</span>
@@ -372,23 +375,23 @@ const MekyasReports: React.FC = () => {
     setCurrentStep('send');
     setIsProcessing(true);
     setSendingProgress({});
-    
+
     // Start sending reports one by one with slight delays
     const selectedReports = selectedRows.map(index => reportData[index]);
-    
+
     for (let i = 0; i < selectedReports.length; i++) {
       const reportIndex = selectedRows[i];
       const report = selectedReports[i];
-      
+
       // Add small delay between starting each report (0.5 seconds)
       if (i > 0) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
-      
+
       // Start sending this report (don't wait for completion)
       simulateReportSending(reportIndex, report);
     }
-    
+
     setIsProcessing(false);
   };
   const cancelProcess = () => {
@@ -410,7 +413,7 @@ const MekyasReports: React.FC = () => {
       let progress = 0;
       const interval = setInterval(() => {
         progress += Math.random() * 15 + 5; // Random progress between 5-20%
-        
+
         setSendingProgress(prev => ({
           ...prev,
           [reportIndex]: {
@@ -421,24 +424,24 @@ const MekyasReports: React.FC = () => {
 
         if (progress >= 100) {
           clearInterval(interval);
-          
+
           // Simulate random success/failure (90% success rate)
           const isSuccess = Math.random() > 0.1;
-          
+
           setSendingProgress(prev => ({
             ...prev,
             [reportIndex]: {
               progress: 100,
               status: isSuccess ? 'success' : 'error',
-              message: isSuccess 
+              message: isSuccess
                 ? `تم إرسال التقرير بنجاح - رقم المرجع: REF-${Date.now().toString().slice(-6)}`
                 : 'فشل في الإرسال - خطأ في الاتصال بنظام الهيئة'
             }
           }));
-          
-          resolve({ 
-            success: isSuccess, 
-            message: isSuccess 
+
+          resolve({
+            success: isSuccess,
+            message: isSuccess
               ? `تم إرسال التقرير بنجاح`
               : 'فشل في الإرسال'
           });
@@ -454,7 +457,7 @@ const MekyasReports: React.FC = () => {
   };
   const filteredData = reportData.filter(report => {
     // Basic search
-    const basicMatch = searchTerm === '' || 
+    const basicMatch = searchTerm === '' ||
       (report.reportName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (report.source?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (report.location?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
@@ -462,7 +465,7 @@ const MekyasReports: React.FC = () => {
       (report.referenceNo?.toLowerCase() || '').includes(searchTerm.toLowerCase());
 
     // Advanced search filters
-    const advancedMatch = 
+    const advancedMatch =
       (searchFilters.reportName === '' || (report.reportName?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase())) &&
       (searchFilters.location === '' || (report.location?.toLowerCase() || '').includes(searchFilters.location.toLowerCase())) &&
       (searchFilters.propertyType === '' || (report.propertyType?.toLowerCase() || '').includes(searchFilters.propertyType.toLowerCase())) &&
@@ -493,8 +496,8 @@ const MekyasReports: React.FC = () => {
               <div key={step.id} className="flex items-center flex-1">
                 <div className="flex items-center">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${
-                    currentStepIndex === stepIdx 
-                      ? 'bg-blue-600 text-white shadow-lg' 
+                    currentStepIndex === stepIdx
+                      ? 'bg-blue-600 text-white shadow-lg'
                       : currentStepIndex > stepIdx
                         ? 'bg-green-600 text-white'
                         : 'bg-gray-200 text-gray-500'
@@ -516,10 +519,10 @@ const MekyasReports: React.FC = () => {
                 {stepIdx !== steps.length - 1 && (
                   <div className="flex-1 mx-4">
                     <div className="h-1 bg-gray-200 rounded-full">
-                      <div 
+                      <div
                         className={`h-1 rounded-full transition-all duration-300 ${
                           currentStepIndex > stepIdx ? 'bg-green-600' : 'bg-gray-200'
-                        }`} 
+                        }`}
                         style={{ width: currentStepIndex > stepIdx ? '100%' : '0%' }}
                       />
                     </div>
@@ -663,25 +666,25 @@ const MekyasReports: React.FC = () => {
               )}
             </div>
           </div>
-          
+
           {/* Search Section */}
           <div className="mb-4 space-y-4">
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input 
-                  type="text" 
-                  placeholder="البحث في التقارير..." 
-                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  value={searchTerm} 
-                  onChange={e => setSearchTerm(e.target.value)} 
+                <input
+                  type="text"
+                  placeholder="البحث في التقارير..."
+                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
                 />
               </div>
               <button
                 onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
                 className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
-                  showAdvancedSearch 
-                    ? 'bg-blue-50 border-blue-300 text-blue-700' 
+                  showAdvancedSearch
+                    ? 'bg-blue-50 border-blue-300 text-blue-700'
                     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -689,13 +692,13 @@ const MekyasReports: React.FC = () => {
                 بحث متقدم
               </button>
             </div>
-            
+
             {renderAdvancedSearch()}
           </div>
 
           <Table columns={columns} data={filteredData} selectable={true} selectedRows={selectedRows} onRowSelect={handleRowSelect} onSelectAll={handleSelectAll} />
         </div>
-        
+
         {/* Continue Button - Always visible but disabled when no selection */}
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
           {selectedRows.length > 0 ? (
@@ -708,10 +711,10 @@ const MekyasReports: React.FC = () => {
             </h4>
           )}
           <div className="flex justify-end">
-            <button 
+            <button
               className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedRows.length > 0 
-                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                selectedRows.length > 0
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
               onClick={startProcess}
@@ -819,24 +822,24 @@ const MekyasReports: React.FC = () => {
   };
   const renderSendStep = () => {
     const selectedReports = selectedRows.map(index => reportData[index]);
-    
+
     return <div>
         <h3 className="text-lg font-medium text-gray-900 mb-6">
           إرسال التقارير إلى نظام الهيئة
         </h3>
-        
+
         <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
           <div className="mb-6">
             <p className="text-gray-600 mb-6">
               جاري إرسال {selectedReports.length} تقرير إلى نظام الهيئة. يرجى الانتظار حتى اكتمال العملية.
             </p>
-            
+
             {/* Individual Report Progress */}
             <div className="space-y-4">
               {selectedReports.map((report, index) => {
                 const reportIndex = selectedRows[index];
                 const progress = sendingProgress[reportIndex];
-                
+
                 return (
                   <div key={reportIndex} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                     <div className="flex items-center justify-between mb-3">
@@ -847,7 +850,7 @@ const MekyasReports: React.FC = () => {
                           <p className="text-sm text-gray-600">رقم المرجع: {report.referenceNo}</p>
                         </div>
                       </div>
-                      
+
                       {/* Status Icon */}
                       <div className="flex items-center">
                         {!progress && (
@@ -872,7 +875,7 @@ const MekyasReports: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     {/* Progress Bar */}
                     <div className="mb-3">
                       <div className="flex justify-between text-sm text-gray-600 mb-1">
@@ -885,7 +888,7 @@ const MekyasReports: React.FC = () => {
                         <span>{progress?.progress || 0}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
+                        <div
                           className={`h-2 rounded-full transition-all duration-300 ${
                             progress?.status === 'success' ? 'bg-green-500' :
                             progress?.status === 'error' ? 'bg-red-500' :
@@ -895,12 +898,12 @@ const MekyasReports: React.FC = () => {
                         />
                       </div>
                     </div>
-                    
+
                     {/* Status Message */}
                     {progress?.message && (
                       <div className={`text-sm p-2 rounded ${
-                        progress.status === 'success' 
-                          ? 'bg-green-50 text-green-700 border border-green-200' 
+                        progress.status === 'success'
+                          ? 'bg-green-50 text-green-700 border border-green-200'
                           : 'bg-red-50 text-red-700 border border-red-200'
                       }`}>
                         {progress.message}
@@ -910,35 +913,35 @@ const MekyasReports: React.FC = () => {
                 );
               })}
             </div>
-            
+
             {/* Overall Status */}
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-blue-600 rounded-full animate-pulse ml-2"></div>
                 <p className="text-sm text-blue-700">
                   {Object.keys(sendingProgress).length === 0 && 'استعداد لبدء الإرسال...'}
-                  {Object.keys(sendingProgress).length > 0 && Object.keys(sendingProgress).length < selectedReports.length && 
+                  {Object.keys(sendingProgress).length > 0 && Object.keys(sendingProgress).length < selectedReports.length &&
                     `جاري إرسال التقرير ${Object.keys(sendingProgress).length} من ${selectedReports.length}`}
-                  {Object.keys(sendingProgress).length === selectedReports.length && 
-                    Object.values(sendingProgress).every(p => p.status !== 'sending') && 
+                  {Object.keys(sendingProgress).length === selectedReports.length &&
+                    Object.values(sendingProgress).every(p => p.status !== 'sending') &&
                     'اكتملت عملية الإرسال'}
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-between">
-            <button 
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50" 
+            <button
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
               onClick={cancelProcess}
               disabled={Object.values(sendingProgress).some(p => p.status === 'sending')}
             >
               إلغاء العملية
             </button>
-            
-            {Object.keys(sendingProgress).length === selectedReports.length && 
+
+            {Object.keys(sendingProgress).length === selectedReports.length &&
              Object.values(sendingProgress).every(p => p.status !== 'sending') && (
-              <button 
+              <button
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 onClick={() => setCurrentStep('result')}
               >
@@ -954,12 +957,12 @@ const MekyasReports: React.FC = () => {
     const successCount = Object.values(sendingProgress).filter(p => p.status === 'success').length;
     const errorCount = Object.values(sendingProgress).filter(p => p.status === 'error').length;
     const totalCount = selectedReports.length;
-    
+
     return <div>
         <h3 className="text-lg font-medium text-gray-900 mb-6">
           نتائج إرسال التقارير
         </h3>
-        
+
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white p-4 rounded-lg border border-gray-200">
@@ -973,7 +976,7 @@ const MekyasReports: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg border border-green-200">
             <div className="flex items-center">
               <div className="bg-green-100 p-2 rounded-full ml-3">
@@ -985,7 +988,7 @@ const MekyasReports: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg border border-red-200">
             <div className="flex items-center">
               <div className="bg-red-100 p-2 rounded-full ml-3">
@@ -1015,13 +1018,13 @@ const MekyasReports: React.FC = () => {
                 <AlertTriangle className="h-8 w-8 text-yellow-600" />
               )}
             </div>
-            
+
             <h4 className="text-xl font-medium mb-2">
-              {errorCount === 0 ? 'تمت العملية بنجاح' : 
-               errorCount === totalCount ? 'فشلت العملية' : 
+              {errorCount === 0 ? 'تمت العملية بنجاح' :
+               errorCount === totalCount ? 'فشلت العملية' :
                'اكتملت العملية جزئياً'}
             </h4>
-            
+
             <p className="text-gray-600 mb-4">
               {errorCount === 0 ? `تم إرسال جميع التقارير (${successCount}) بنجاح إلى نظام الهيئة` :
                errorCount === totalCount ? 'فشل في إرسال جميع التقارير، يرجى المحاولة مرة أخرى' :
@@ -1035,12 +1038,12 @@ const MekyasReports: React.FC = () => {
           <div className="p-4 border-b border-gray-200">
             <h4 className="text-lg font-medium text-gray-900">تفاصيل النتائج</h4>
           </div>
-          
+
           <div className="divide-y divide-gray-200">
             {selectedReports.map((report, index) => {
               const reportIndex = selectedRows[index];
               const progress = sendingProgress[reportIndex];
-              
+
               return (
                 <div key={reportIndex} className="p-4">
                   <div className="flex items-center justify-between">
@@ -1054,28 +1057,28 @@ const MekyasReports: React.FC = () => {
                           <AlertTriangle className="h-4 w-4 text-red-600" />
                         )}
                       </div>
-                      
+
                       <div>
                         <h5 className="font-medium text-gray-900">{report.reportName}</h5>
                         <p className="text-sm text-gray-600">رقم المرجع: {report.referenceNo}</p>
                       </div>
                     </div>
-                    
+
                     <div className="text-right">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        progress?.status === 'success' 
-                          ? 'bg-green-100 text-green-800' 
+                        progress?.status === 'success'
+                          ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
                         {progress?.status === 'success' ? 'تم الإرسال' : 'فشل الإرسال'}
                       </span>
                     </div>
                   </div>
-                  
+
                   {progress?.message && (
                     <div className={`mt-2 p-2 rounded text-sm ${
-                      progress.status === 'success' 
-                        ? 'bg-green-50 text-green-700' 
+                      progress.status === 'success'
+                        ? 'bg-green-50 text-green-700'
                         : 'bg-red-50 text-red-700'
                     }`}>
                       {progress.message}
@@ -1089,19 +1092,19 @@ const MekyasReports: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="flex justify-center space-x-4 space-x-reverse">
-          <button 
+          <button
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             onClick={resetWorkflow}
           >
             إرسال تقارير جديدة
           </button>
-          
+
           {errorCount > 0 && (
-            <button 
+            <button
               className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               onClick={() => {
                 // Reset only failed reports for retry
-                const failedIndexes = selectedRows.filter(index => 
+                const failedIndexes = selectedRows.filter(index =>
                   sendingProgress[index]?.status === 'error'
                 );
                 setSelectedRows(failedIndexes);
@@ -1141,11 +1144,11 @@ const MekyasReports: React.FC = () => {
                   <p className="text-gray-600 mb-4">
                     ابحث عن تقرير عقارات محدد وقم بسحبه وإرساله إلى نظام الهيئة
                   </p>
-                  
+
                   {/* Single Report Search Section */}
                   <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
                     <h4 className="text-lg font-medium text-gray-900 mb-4">البحث عن التقرير</h4>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1160,7 +1163,7 @@ const MekyasReports: React.FC = () => {
                           onChange={(e) => setSearchFilters({...searchFilters, referenceNo: e.target.value})}
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           <FileText className="h-4 w-4 inline ml-1" />
@@ -1174,7 +1177,7 @@ const MekyasReports: React.FC = () => {
                           onChange={(e) => setSearchFilters({...searchFilters, reportName: e.target.value})}
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           <MapPin className="h-4 w-4 inline ml-1" />
@@ -1188,7 +1191,7 @@ const MekyasReports: React.FC = () => {
                           onChange={(e) => setSearchFilters({...searchFilters, location: e.target.value})}
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           <Building className="h-4 w-4 inline ml-1" />
@@ -1210,7 +1213,7 @@ const MekyasReports: React.FC = () => {
                         </select>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-3">
                       <button
                         className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
@@ -1241,18 +1244,18 @@ const MekyasReports: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                  
+
                   {/* Search Results */}
                   {filteredData.length > 0 && (searchFilters.referenceNo || searchFilters.reportName || searchFilters.location || searchFilters.propertyType) && (
                     <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
                       <h4 className="text-lg font-medium text-gray-900 mb-4">نتائج البحث</h4>
                       <div className="space-y-3">
                         {filteredData.slice(0, 3).map((report, index) => (
-                          <div 
+                          <div
                             key={report.id}
                             className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                              selectedRows.includes(index) 
-                                ? 'border-blue-500 bg-blue-50' 
+                              selectedRows.includes(index)
+                                ? 'border-blue-500 bg-blue-50'
                                 : 'border-gray-200 hover:border-gray-300'
                             }`}
                             onClick={() => setSelectedRows([index])}
@@ -1300,20 +1303,20 @@ const MekyasReports: React.FC = () => {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Continue Button */}
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
                   <h4 className="font-medium text-gray-500 mb-3">
                     {selectedRows.length > 0 ? `تم اختيار التقرير للسحب` : 'ابحث عن التقرير وحدده للمتابعة'}
                   </h4>
                   <div className="flex justify-end">
-                    <button 
+                    <button
                       className={`px-6 py-3 rounded-lg transition-colors font-medium ${
-                        selectedRows.length > 0 
-                          ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                        selectedRows.length > 0
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
                           : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`} 
-                      disabled={selectedRows.length === 0} 
+                      }`}
+                      disabled={selectedRows.length === 0}
                       onClick={startProcess}
                     >
                       {selectedRows.length > 0 ? 'سحب التقرير والمتابعة' : 'حدد تقرير للمتابعة'}
@@ -1370,14 +1373,14 @@ const MekyasReports: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Continue Button */}
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
                   <h4 className="font-medium text-gray-500 mb-3">
                     قم برفع الملفات للمتابعة
                   </h4>
                   <div className="flex justify-end">
-                    <button 
+                    <button
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                       onClick={startProcess}
                     >

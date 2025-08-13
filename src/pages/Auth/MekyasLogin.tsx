@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, User, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTr } from '../../context/LanguageContext';
 
 const MekyasLogin: React.FC = () => {
+  const tr = useTr();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -47,7 +49,7 @@ const MekyasLogin: React.FC = () => {
         navigate('/reports/mekyas');
       }, 700);
     } catch (err) {
-      setError('حدث خطأ في تسجيل الدخول');
+      setError(tr('حدث خطأ في تسجيل الدخول','An error occurred during login'));
       setLoginStep('form');
     } finally {
       setIsLoading(false);
@@ -60,10 +62,10 @@ const MekyasLogin: React.FC = () => {
         <Loader className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">
-        جاري التحقق من بيانات الدخول
+        {tr('جاري التحقق من بيانات الدخول','Verifying your credentials')}
       </h3>
       <p className="text-gray-600">
-        يتم التحقق من صحة البيانات مع موقع مقياس...
+        {tr('يتم التحقق من صحة البيانات مع موقع مقياس...','Validating your data with Mekyas...')}
       </p>
       <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
         <p className="text-sm text-blue-700">
@@ -79,14 +81,14 @@ const MekyasLogin: React.FC = () => {
         <CheckCircle className="h-12 w-12 text-green-600 mx-auto" />
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">
-        تم تسجيل الدخول بنجاح
+        {tr('تم تسجيل الدخول بنجاح','Logged in successfully')}
       </h3>
       <p className="text-gray-600 mb-4">
         مرحباً {formData.username}، سيتم تحويلك إلى صفحة التقارير...
       </p>
       <div className="bg-green-50 border border-green-200 rounded-lg p-3">
         <p className="text-sm text-green-700">
-          تم التحقق من هويتك بنجاح مع موقع مقياس
+          {tr('تم التحقق من هويتك بنجاح مع موقع مقياس','Your identity has been verified with Mekyas')}
         </p>
       </div>
     </div>
@@ -97,7 +99,7 @@ const MekyasLogin: React.FC = () => {
       <div>
         <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
           <User className="h-4 w-4 inline ml-1" />
-          اسم المستخدم
+          {tr('اسم المستخدم','Username')}
         </label>
         <input
           type="text"
@@ -106,7 +108,7 @@ const MekyasLogin: React.FC = () => {
           value={formData.username}
           onChange={handleInputChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="أدخل اسم المستخدم الخاص بك في موقع مقياس"
+          placeholder={tr('أدخل اسم المستخدم الخاص بك في موقع مقياس','Enter your Mekyas username')}
           disabled={isLoading}
         />
       </div>
@@ -114,7 +116,7 @@ const MekyasLogin: React.FC = () => {
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
           <Lock className="h-4 w-4 inline ml-1" />
-          كلمة المرور
+          {tr('كلمة المرور','Password')}
         </label>
         <div className="relative">
           <input
@@ -124,7 +126,7 @@ const MekyasLogin: React.FC = () => {
             value={formData.password}
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
-            placeholder="أدخل كلمة المرور"
+            placeholder={tr('أدخل كلمة المرور','Enter your password')}
             disabled={isLoading}
           />
           <button
@@ -175,10 +177,10 @@ const MekyasLogin: React.FC = () => {
             <Lock className="h-8 w-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
-            تسجيل الدخول إلى مقياس
+            {tr('تسجيل الدخول إلى مقياس','Sign in to Mekyas')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            يرجى تسجيل الدخول بحساب موقع مقياس للوصول إلى التقارير
+            {tr('يرجى تسجيل الدخول بحساب موقع مقياس للوصول إلى التقارير','Please sign in with your Mekyas account to access reports')}
           </p>
         </div>
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 import { 
   FileText, 
@@ -23,6 +24,8 @@ import {
   Award
 } from 'lucide-react';
 const Home: React.FC = () => {
+  const { lang } = useLanguage();
+  const tr = (ar: string, en: string) => (lang === 'ar' ? ar : en);
   return <div className="w-full min-h-[calc(100vh-4rem)] bg-white">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 py-20 px-4 sm:px-6 lg:px-8 text-center text-white relative overflow-hidden">
@@ -30,37 +33,37 @@ const Home: React.FC = () => {
         <div className="relative z-10">
           <div className="inline-flex items-center bg-blue-500 bg-opacity-20 px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Zap className="h-4 w-4 mr-2" />
-            الحل الأمثل لإدارة التقارير العقارية
+            {tr('الحل الأمثل لإدارة التقارير العقارية', 'The optimal solution for managing real estate reports')}
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            نظام إدارة تقارير العقارات
+            {tr('نظام إدارة تقارير العقارات', 'Real Estate Reports Management System')}
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto mb-8 leading-relaxed">
-            🚀 منصة متكاملة وذكية لإدارة وسحب وإرسال تقارير العقارات بين الأنظمة المختلفة
+            {tr('🚀 منصة متكاملة وذكية لإدارة وسحب وإرسال تقارير العقارات بين الأنظمة المختلفة', '🚀 A smart, integrated platform to manage, pull, and send real estate reports across systems')}
             <br />
-            <span className="text-blue-200">بكفاءة عالية وسرعة فائقة</span>
+            <span className="text-blue-200">{tr('بكفاءة عالية وسرعة فائقة', 'With high efficiency and blazing speed')}</span>
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
             <Link to="/auth/login" className="px-8 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-gray-100 transition-colors shadow-lg inline-flex items-center justify-center">
               <ArrowRight className="ml-2 h-5 w-5" />
-              ابدأ باستخدام النظام الآن
+              {tr('ابدأ باستخدام النظام الآن', 'Start using the system now')}
             </Link>
             <Link to="/help" className="px-8 py-4 bg-transparent text-white font-medium rounded-lg border-2 border-white hover:bg-white hover:text-blue-600 transition-colors">
-              تعلم المزيد
+              {tr('تعلم المزيد', 'Learn more')}
             </Link>
           </div>
           <div className="flex justify-center items-center gap-8 text-sm">
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-green-400 mr-2" />
-              أكثر من 1000+ مستخدم
+              {tr('أكثر من 1000+ مستخدم', '1000+ users')}
             </div>
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-green-400 mr-2" />
-              دعم فني 24/7
+              {tr('دعم فني 24/7', '24/7 support')}
             </div>
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-green-400 mr-2" />
-              أمان عالي
+              {tr('أمان عالي', 'High security')}
             </div>
           </div>
         </div>
@@ -70,10 +73,10 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              لماذا تختار نظامنا؟
+              {tr('لماذا تختار نظامنا؟', 'Why choose our system?')}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              نقدم لك أفضل الحلول التقنية لإدارة تقارير العقارات بكفاءة واحترافية عالية
+              {tr('نقدم لك أفضل الحلول التقنية لإدارة تقارير العقارات بكفاءة واحترافية عالية', 'We provide the best technical solutions to manage real estate reports efficiently and professionally')}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -82,10 +85,10 @@ const Home: React.FC = () => {
                 <Zap className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                سرعة فائقة ⚡
+                {tr('سرعة فائقة ⚡', 'Lightning fast ⚡')}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                سحب التقارير في ثوانٍ معدودة مع تقنيات متطورة توفر عليك ساعات من العمل
+                {tr('سحب التقارير في ثوانٍ معدودة مع تقنيات متطورة توفر عليك ساعات من العمل', 'Pull reports in seconds with advanced technologies that save you hours of work')}
               </p>
             </div>
             <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
@@ -93,10 +96,10 @@ const Home: React.FC = () => {
                 <Shield className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                أمان عالي 🔒
+                {tr('أمان عالي 🔒', 'High security 🔒')}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                حماية متقدمة لبياناتك مع تشفير من الدرجة العسكرية وامتثال كامل للمعايير الدولية
+                {tr('حماية متقدمة لبياناتك مع تشفير من الدرجة العسكرية وامتثال كامل للمعايير الدولية', 'Advanced data protection with military-grade encryption and full standards compliance')}
               </p>
             </div>
             <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
@@ -104,10 +107,10 @@ const Home: React.FC = () => {
                 <Globe className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                تكامل شامل 🌐
+                {tr('تكامل شامل 🌐', 'Comprehensive integration 🌐')}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                يعمل مع جميع الأنظمة العقارية الرئيسية في المملكة مع واجهات برمجية متطورة
+                {tr('يعمل مع جميع الأنظمة العقارية الرئيسية في المملكة مع واجهات برمجية متطورة', 'Works with all major real estate systems with advanced APIs')}
               </p>
             </div>
             <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
@@ -115,10 +118,10 @@ const Home: React.FC = () => {
                 <Clock className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                متاح 24/7 ⏰
+                {tr('متاح 24/7 ⏰', 'Available 24/7 ⏰')}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                خدمة مستمرة على مدار الساعة مع دعم فني متخصص لضمان عدم توقف عملك
+                {tr('خدمة مستمرة على مدار الساعة مع دعم فني متخصص لضمان عدم توقف عملك', 'Continuous service around the clock with specialized support to keep your work running')}
               </p>
             </div>
           </div>
@@ -130,40 +133,40 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              الأنظمة المدعومة والشركاء
+              {tr('الأنظمة المدعومة والشركاء', 'Supported systems & partners')}
             </h2>
             <p className="text-xl text-gray-600">
-              نتكامل مع أفضل الأنظمة العقارية في المملكة
+              {tr('نتكامل مع أفضل الأنظمة العقارية في المملكة', 'We integrate with top real estate systems in KSA')}
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center">
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-blue-600">مقياس</span>
+                <span className="text-2xl font-bold text-blue-600">{tr('مقياس', 'Mekyas')}</span>
               </div>
-              <h3 className="font-semibold text-gray-900">نظام مقياس</h3>
-              <p className="text-sm text-gray-600 mt-1">تكامل كامل</p>
+              <h3 className="font-semibold text-gray-900">{tr('نظام مقياس', 'Mekyas System')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{tr('تكامل كامل', 'Full integration')}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center">
               <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-green-600">نقرة</span>
+                <span className="text-2xl font-bold text-green-600">{tr('نقرة', 'Noqra')}</span>
               </div>
-              <h3 className="font-semibold text-gray-900">نظام نقرة</h3>
-              <p className="text-sm text-gray-600 mt-1">دعم متقدم</p>
+              <h3 className="font-semibold text-gray-900">{tr('نظام نقرة', 'Noqra System')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{tr('دعم متقدم', 'Advanced support')}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center">
               <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Globe className="h-8 w-8 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-gray-900">أنظمة أخرى</h3>
-              <p className="text-sm text-gray-600 mt-1">قريباً</p>
+              <h3 className="font-semibold text-gray-900">{tr('أنظمة أخرى', 'Other systems')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{tr('قريباً', 'Coming soon')}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center">
               <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Settings className="h-8 w-8 text-orange-600" />
               </div>
-              <h3 className="font-semibold text-gray-900">API مخصص</h3>
-              <p className="text-sm text-gray-600 mt-1">حسب الطلب</p>
+              <h3 className="font-semibold text-gray-900">{tr('API مخصص', 'Custom API')}</h3>
+              <p className="text-sm text-gray-600 mt-1">{tr('حسب الطلب', 'On demand')}</p>
             </div>
           </div>
         </div>
@@ -175,19 +178,19 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold text-blue-600 mb-2">1000+</div>
-              <div className="text-gray-600">مستخدم نشط</div>
+              <div className="text-gray-600">{tr('مستخدم نشط', 'Active users')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-blue-600 mb-2">50K+</div>
-              <div className="text-gray-600">تقرير تم سحبه</div>
+              <div className="text-gray-600">{tr('تقرير تم سحبه', 'Reports pulled')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-blue-600 mb-2">99.9%</div>
-              <div className="text-gray-600">وقت التشغيل</div>
+              <div className="text-gray-600">{tr('وقت التشغيل', 'Uptime')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-blue-600 mb-2">24/7</div>
-              <div className="text-gray-600">دعم فني</div>
+              <div className="text-gray-600">{tr('دعم فني', 'Support')}</div>
             </div>
           </div>
         </div>
@@ -198,10 +201,10 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              فوائد استخدام النظام
+              {tr('فوائد استخدام النظام', 'Benefits of using the system')}
             </h2>
             <p className="text-xl text-gray-600">
-              اكتشف كيف يمكن لنظامنا أن يحول طريقة عملك
+              {tr('اكتشف كيف يمكن لنظامنا أن يحول طريقة عملك', 'Discover how our system can transform your workflow')}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -212,10 +215,10 @@ const Home: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    زيادة الإنتاجية بنسبة 300%
+                    {tr('زيادة الإنتاجية بنسبة 300%', 'Increase productivity by 300%')}
                   </h3>
                   <p className="text-gray-600">
-                    وفر ساعات من العمل اليدوي واستفد من الأتمتة الذكية
+                    {tr('وفر ساعات من العمل اليدوي واستفد من الأتمتة الذكية', 'Save hours of manual work and benefit from smart automation')}
                   </p>
                 </div>
               </div>
@@ -225,10 +228,10 @@ const Home: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    تعاون فريق محسن
+                    {tr('تعاون فريق محسن', 'Improved team collaboration')}
                   </h3>
                   <p className="text-gray-600">
-                    شارك التقارير والبيانات مع فريقك بسهولة وأمان
+                    {tr('شارك التقارير والبيانات مع فريقك بسهولة وأمان', 'Share reports and data with your team easily and securely')}
                   </p>
                 </div>
               </div>
@@ -238,10 +241,10 @@ const Home: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    إدارة متقدمة للتقارير
+                    {tr('إدارة متقدمة للتقارير', 'Advanced reports management')}
                   </h3>
                   <p className="text-gray-600">
-                    نظم وأرشف تقاريرك مع إمكانيات البحث والتصفية المتقدمة
+                    {tr('نظم وأرشف تقاريرك مع إمكانيات البحث والتصفية المتقدمة', 'Organize and archive your reports with advanced search and filtering')}
                   </p>
                 </div>
               </div>
@@ -252,16 +255,16 @@ const Home: React.FC = () => {
                   <Star className="h-10 w-10 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  جرب النظام مجاناً
+                  {tr('جرب النظام مجاناً', 'Try the system for free')}
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  ابدأ رحلتك معنا اليوم واكتشف الفرق
+                  {tr('ابدأ رحلتك معنا اليوم واكتشف الفرق', 'Start your journey with us today and see the difference')}
                 </p>
                 <Link 
                   to="/auth/mekyas" 
                   className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
                 >
-                  ابدأ الآن مجاناً
+                  {tr('ابدأ الآن مجاناً', 'Start now for free')}
                   <ArrowRight className="mr-2 h-5 w-5" />
                 </Link>
               </div>
@@ -275,13 +278,13 @@ const Home: React.FC = () => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center bg-blue-100 px-4 py-2 rounded-full text-sm font-medium text-blue-800 mb-6">
               <Crown className="h-4 w-4 mr-2" />
-              اختر الباقة المناسبة لك
+              {tr('اختر الباقة المناسبة لك', 'Choose the right plan for you')}
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              باقات الاشتراك
+              {tr('باقات الاشتراك', 'Subscription plans')}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              خطط مرنة تناسب احتياجاتك من الأفراد إلى الشركات الكبيرة
+              {tr('خطط مرنة تناسب احتياجاتك من الأفراد إلى الشركات الكبيرة', 'Flexible plans for individuals and enterprises')}
             </p>
           </div>
 
@@ -303,28 +306,28 @@ const Home: React.FC = () => {
                 <ul className="text-right space-y-3 mb-8">
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">حتى 100 تقرير شهرياً</span>
+                    <span className="text-gray-700">{tr('حتى 100 تقرير شهرياً', 'Up to 100 reports/month')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تكامل مع نظام مقياس</span>
+                    <span className="text-gray-700">{tr('تكامل مع نظام مقياس', 'Integration with Mekyas')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">دعم فني عبر البريد الإلكتروني</span>
+                    <span className="text-gray-700">{tr('دعم فني عبر البريد الإلكتروني', 'Email support')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تخزين 5 جيجا</span>
+                    <span className="text-gray-700">{tr('تخزين 5 جيجا', '5GB storage')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">مستخدم واحد</span>
+                    <span className="text-gray-700">{tr('مستخدم واحد', 'Single user')}</span>
                   </li>
                 </ul>
 
                 <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-                  اختر هذه الباقة
+                  {tr('اختر هذه الباقة', 'Choose this plan')}
                 </button>
               </div>
             </div>
@@ -333,7 +336,7 @@ const Home: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-xl border-2 border-blue-500 p-8 relative transform scale-105">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                  الأكثر شعبية
+                  {tr('الأكثر شعبية', 'Most popular')}
                 </span>
               </div>
               
@@ -346,39 +349,39 @@ const Home: React.FC = () => {
                 
                 <div className="mb-6">
                   <span className="text-4xl font-bold text-gray-900">599</span>
-                  <span className="text-gray-600 mr-2">ريال/شهرياً</span>
-                  <div className="text-sm text-green-600 font-medium">وفر 20% سنوياً</div>
+                  <span className="text-gray-600 mr-2">{tr('ريال/شهرياً', 'SAR/month')}</span>
+                  <div className="text-sm text-green-600 font-medium">{tr('وفر 20% سنوياً', 'Save 20% annually')}</div>
                 </div>
 
                 <ul className="text-right space-y-3 mb-8">
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">حتى 500 تقرير شهرياً</span>
+                    <span className="text-gray-700">{tr('حتى 500 تقرير شهرياً', 'Up to 500 reports/month')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تكامل مع مقياس ونقرة</span>
+                    <span className="text-gray-700">{tr('تكامل مع مقياس ونقرة', 'Integration with Mekyas & Noqra')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">دعم فني هاتفي ومباشر</span>
+                    <span className="text-gray-700">{tr('دعم فني هاتفي ومباشر', 'Phone and live support')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تخزين 25 جيجا</span>
+                    <span className="text-gray-700">{tr('تخزين 25 جيجا', '25GB storage')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">حتى 5 مستخدمين</span>
+                    <span className="text-gray-700">{tr('حتى 5 مستخدمين', 'Up to 5 users')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تقارير تحليلية متقدمة</span>
+                    <span className="text-gray-700">{tr('تقارير تحليلية متقدمة', 'Advanced analytics reports')}</span>
                   </li>
                 </ul>
 
                 <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-colors">
-                  اختر هذه الباقة
+                  {tr('اختر هذه الباقة', 'Choose this plan')}
                 </button>
               </div>
             </div>
@@ -394,39 +397,39 @@ const Home: React.FC = () => {
                 
                 <div className="mb-6">
                   <span className="text-4xl font-bold text-gray-900">1299</span>
-                  <span className="text-gray-600 mr-2">ريال/شهرياً</span>
-                  <div className="text-sm text-green-600 font-medium">وفر 30% سنوياً</div>
+                  <span className="text-gray-600 mr-2">{tr('ريال/شهرياً', 'SAR/month')}</span>
+                  <div className="text-sm text-green-600 font-medium">{tr('وفر 30% سنوياً', 'Save 30% annually')}</div>
                 </div>
 
                 <ul className="text-right space-y-3 mb-8">
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تقارير غير محدودة</span>
+                    <span className="text-gray-700">{tr('تقارير غير محدودة', 'Unlimited reports')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تكامل مع جميع الأنظمة</span>
+                    <span className="text-gray-700">{tr('تكامل مع جميع الأنظمة', 'Integration with all systems')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">مدير حساب مخصص</span>
+                    <span className="text-gray-700">{tr('مدير حساب مخصص', 'Dedicated account manager')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">تخزين غير محدود</span>
+                    <span className="text-gray-700">{tr('تخزين غير محدود', 'Unlimited storage')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">مستخدمين غير محدود</span>
+                    <span className="text-gray-700">{tr('مستخدمين غير محدود', 'Unlimited users')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-500 ml-3" />
-                    <span className="text-gray-700">API مخصص</span>
+                    <span className="text-gray-700">{tr('API مخصص', 'Custom API')}</span>
                   </li>
                 </ul>
 
                 <button className="w-full bg-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-purple-700 transition-colors">
-                  تواصل معنا
+                  {tr('تواصل معنا', 'Contact us')}
                 </button>
               </div>
             </div>
@@ -436,9 +439,9 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-8 text-white text-center">
             <div className="inline-flex items-center bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Star className="h-4 w-4 mr-2" />
-              عرض محدود
+              {tr('عرض محدود', 'Limited offer')}
             </div>
-            <h3 className="text-2xl font-bold mb-2">🎉 احصل على شهر إضافي مجاناً!</h3>
+            <h3 className="text-2xl font-bold mb-2">{tr('🎉 احصل على شهر إضافي مجاناً!', '🎉 Get an extra month free!')}</h3>
             <p className="text-lg mb-4">عند الاشتراك السنوي في أي باقة</p>
             <p className="text-sm opacity-90">* العرض ساري حتى نهاية الشهر</p>
           </div>
@@ -450,10 +453,10 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              خطوات الاشتراك السهلة
+              {tr('خطوات الاشتراك السهلة', 'Easy subscription steps')}
             </h2>
             <p className="text-xl text-gray-600">
-              ابدأ رحلتك معنا في 4 خطوات بسيطة
+              {tr('ابدأ رحلتك معنا في 4 خطوات بسيطة', 'Start your journey with us in 4 simple steps')}
             </p>
           </div>
 
@@ -462,9 +465,9 @@ const Home: React.FC = () => {
               <div className="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-blue-600">1</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">اختر الباقة</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{tr('اختر الباقة', 'Choose a plan')}</h3>
               <p className="text-gray-600">
-                حدد الباقة التي تناسب احتياجاتك وحجم عملك
+                {tr('حدد الباقة التي تناسب احتياجاتك وحجم عملك', 'Choose the plan that suits your needs and business size')}
               </p>
             </div>
 
@@ -472,9 +475,9 @@ const Home: React.FC = () => {
               <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-green-600">2</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">أنشئ حسابك</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{tr('أنشئ حسابك', 'Create your account')}</h3>
               <p className="text-gray-600">
-                سجل بياناتك الأساسية وبيانات شركتك
+                {tr('سجل بياناتك الأساسية وبيانات شركتك', 'Enter your basic details and company information')}
               </p>
             </div>
 
@@ -482,9 +485,9 @@ const Home: React.FC = () => {
               <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-purple-600">3</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">ادفع بأمان</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{tr('ادفع بأمان', 'Pay securely')}</h3>
               <p className="text-gray-600">
-                اختر طريقة الدفع المناسبة واستكمل عملية الدفع الآمنة
+                {tr('اختر طريقة الدفع المناسبة واستكمل عملية الدفع الآمنة', 'Choose your payment method and complete a secure checkout')}
               </p>
             </div>
 
@@ -492,9 +495,9 @@ const Home: React.FC = () => {
               <div className="bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-orange-600">4</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">ابدأ الاستخدام</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{tr('ابدأ الاستخدام', 'Start using')}</h3>
               <p className="text-gray-600">
-                استمتع بجميع المميزات فوراً واحصل على التدريب المجاني
+                {tr('استمتع بجميع المميزات فوراً واحصل على التدريب المجاني', 'Enjoy all features instantly and get free training')}
               </p>
             </div>
           </div>
@@ -504,7 +507,7 @@ const Home: React.FC = () => {
               to="/auth/login" 
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors shadow-lg text-lg"
             >
-              ابدأ الاشتراك الآن
+              {tr('ابدأ الاشتراك الآن', 'Start your subscription now')}
               <ArrowRight className="mr-2 h-6 w-6" />
             </Link>
           </div>
