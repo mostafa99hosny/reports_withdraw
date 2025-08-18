@@ -10,10 +10,13 @@ import Privacy from './pages/Legal/Privacy';
 import MekyasReports from './pages/Reports/MekyasReports';
 import ViewReports from './pages/Reports/ViewReports';
 import NoqraReports from './pages/Reports/NoqraReports';
+import ManualUpload from './pages/Reports/ManualUpload';
 import ManagementDashboard from './pages/Dashboard/ManagementDashboard';
 import UserSettings from './pages/Settings/UserSettings';
 import SupportPage from './pages/Support/SupportPage';
 import HelpPage from './pages/Help/HelpPage';
+import EquipmentManualUpload from './pages/Reports/EquipmentManualUpload';
+
 export function App() {
   return <Router>
       <Layout>
@@ -27,6 +30,8 @@ export function App() {
           <Route path="/reports/mekyas" element={<MekyasReports />} />
           <Route path="/reports/view" element={<ViewReports />} />
           <Route path="/reports/noqra" element={<NoqraReports />} />
+          <Route path="/reports/manual-upload" element={<ManualUpload />} />
+          <Route path="/equipment-reports/manual-upload" element={<EquipmentManualUpload />} />
           <Route path="/dashboard" element={<ManagementDashboard />} />
           <Route path="/settings" element={<UserSettings />} />
           <Route path="/support" element={<SupportPage />} />

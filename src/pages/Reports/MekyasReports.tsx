@@ -10,7 +10,7 @@ const MekyasReports: React.FC = () => {
   const tr = useTr();
   const { lang } = useLanguage();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'automatic' | 'single' | 'manual'>('automatic');
+  const [activeTab, setActiveTab] = useState<'automatic' | 'single'>('automatic');
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -120,7 +120,8 @@ const MekyasReports: React.FC = () => {
     value: '2,500,000',
     priority: 'عالي',
     submittedBy: 'أحمد محمد',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }, {
     id: 2,
     reportName: 'كشف العقارات التجارية - جدة',
@@ -136,7 +137,8 @@ const MekyasReports: React.FC = () => {
     value: '1,800,000',
     priority: 'متوسط',
     submittedBy: 'سارة أحمد',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }, {
     id: 3,
     reportName: 'كشف العقارات الصناعية - الدمام',
@@ -152,7 +154,8 @@ const MekyasReports: React.FC = () => {
     value: '3,200,000',
     priority: 'عالي',
     submittedBy: 'محمد علي',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }, {
     id: 4,
     reportName: 'كشف العقارات السكنية - الطائف',
@@ -168,7 +171,8 @@ const MekyasReports: React.FC = () => {
     value: '850,000',
     priority: 'منخفض',
     submittedBy: 'فاطمة خالد',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }, {
     id: 5,
     reportName: 'كشف العقارات التجارية - أبها',
@@ -184,7 +188,8 @@ const MekyasReports: React.FC = () => {
     value: '650,000',
     priority: 'متوسط',
     submittedBy: 'عبدالله سعد',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }, {
     id: 6,
     reportName: 'كشف العقارات السكنية - تبوك',
@@ -200,7 +205,8 @@ const MekyasReports: React.FC = () => {
     value: '2,100,000',
     priority: 'عالي',
     submittedBy: 'نورا حسن',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }, {
     id: 7,
     reportName: 'كشف العقارات الاستثمارية - حائل',
@@ -216,7 +222,8 @@ const MekyasReports: React.FC = () => {
     value: '8,500,000',
     priority: 'عالي',
     submittedBy: 'خالد عمر',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }, {
     id: 8,
     reportName: 'كشف العقارات الزراعية - القصيم',
@@ -232,7 +239,8 @@ const MekyasReports: React.FC = () => {
     value: '4,200,000',
     priority: 'متوسط',
     submittedBy: 'ريم محمد',
-    department: 'قسم العقارات'
+    department: 'قسم العقارات',
+    quantity: 1
   }];
   const columns = [{
     header: tr('الرقم','ID'),
@@ -771,9 +779,9 @@ const MekyasReports: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">نوع المعدة:</span>
+                      <span className="text-sm text-gray-500">نوع العقار:</span>
                       <span className="text-sm font-medium">
-                        {report.equipmentType}
+                        {report.propertyType}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -1333,84 +1341,7 @@ const MekyasReports: React.FC = () => {
           default:
             return renderSelectStep();
         }
-      case 'manual':
-        switch (currentStep) {
-          case 'select':
-            return <div>
-                <div className="mb-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    سحب تقرير عقارات يدوي
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    قم برفع ملفات تقرير العقارات من جهازك لإرسالها إلى نظام الهيئة
-                  </p>
-                  <div className="space-y-4">
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                      <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-gray-600 mb-2">
-                        اسحب ملف Excel أو انقر للتحميل
-                      </p>
-                      <p className="text-gray-500 text-sm">
-                        يجب أن يكون الملف بصيغة XLSX أو XLS
-                      </p>
-                      <input type="file" className="hidden" accept=".xlsx,.xls" id="excel-upload" />
-                      <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onClick={() => document.getElementById('excel-upload')?.click()}>
-                        اختيار ملف Excel
-                      </button>
-                    </div>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
-                      <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-gray-600 mb-2">
-                        اسحب ملفات PDF المرتبطة أو انقر للتحميل
-                      </p>
-                      <p className="text-gray-500 text-sm">
-                        يمكنك تحميل عدة ملفات PDF
-                      </p>
-                      <input type="file" className="hidden" accept=".pdf" multiple id="pdf-upload" />
-                      <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors" onClick={() => document.getElementById('pdf-upload')?.click()}>
-                        اختيار ملفات PDF
-                      </button>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Continue Button */}
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
-                  <h4 className="font-medium text-gray-500 mb-3">
-                    قم برفع الملفات للمتابعة
-                  </h4>
-                  <div className="flex justify-end">
-                    <button
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                      onClick={startProcess}
-                    >
-                      متابعة للتحقق من البيانات
-                    </button>
-                  </div>
-                </div>
-              </div>;
-          case 'verify':
-            return renderVerifyStep();
-          case 'send':
-            return renderSendStep();
-          case 'result':
-            return renderResultStep();
-          default:
-            return <div>
-                <div className="mb-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    سحب تقرير عقارات يدوي
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    قم برفع ملفات تقرير العقارات من جهازك لإرسالها إلى نظام الهيئة
-                  </p>
-                </div>
-                <div className="text-center py-8 text-gray-500">
-                  <FileText className="h-12 w-12 mx-auto mb-3 text-gray-400" />
-                  <p>قم برفع الملفات للبدء في عملية الإرسال</p>
-                </div>
-              </div>;
-        }
     }
   };
   return <div className="w-full">
@@ -1430,25 +1361,11 @@ const MekyasReports: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="border-b border-gray-200">
           <nav className="flex -mb-px">
-            <button className={`py-4 px-6 text-center border-b-2 text-sm font-medium ${activeTab === 'automatic' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`} onClick={() => {
-            setActiveTab('automatic');
-            if (currentStep !== 'select') {
-              resetWorkflow();
-            }
-          }}>
+            <button className={`py-4 px-6 text-center border-b-2 text-sm font-medium ${activeTab === 'automatic' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`} onClick={() => setActiveTab('automatic')}>
               سحب تقارير العقارات التلقائي
             </button>
-            <button className={`py-4 px-6 text-center border-b-2 text-sm font-medium ${activeTab === 'single' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`} onClick={() => {
-            setActiveTab('single');
-            resetWorkflow();
-          }}>
+            <button className={`py-4 px-6 text-center border-b-2 text-sm font-medium ${activeTab === 'single' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`} onClick={() => setActiveTab('single')}>
               سحب تقرير عقارات واحد
-            </button>
-            <button className={`py-4 px-6 text-center border-b-2 text-sm font-medium ${activeTab === 'manual' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`} onClick={() => {
-            setActiveTab('manual');
-            resetWorkflow();
-          }}>
-              سحب تقرير عقارات يدوي
             </button>
           </nav>
         </div>
