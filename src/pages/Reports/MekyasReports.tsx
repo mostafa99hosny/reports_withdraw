@@ -535,6 +535,34 @@ const MekyasReports: React.FC = () => {
     }, 150);
   };
 
+  const handleResendSingleReport = (report: any, idx: number) => {
+    // تحديث حالة الإرسال لهذا التقرير فقط
+    setBulkSendResults(results => results.map((r, i) => {
+      if (i === idx) {
+        return { ...r, status: 'sending', message: 'جاري إعادة الإرسال...' };
+      }
+      return r;
+    }));
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 20;
+      if (progress >= 100) {
+        clearInterval(interval);
+        const isSuccess = Math.random() > 0.2;
+        setBulkSendResults(results => results.map((r, i) => {
+          if (i === idx) {
+            return {
+              ...r,
+              status: isSuccess ? 'success' : 'error',
+              message: isSuccess ? `تم إرسال التقرير بنجاح - رقم المرجع: ${r.referenceNo}` : 'فشل في الإرسال'
+            };
+          }
+          return r;
+        }));
+      }
+    }, 200);
+  };
+
   const columns = [{
     header: tr('الرقم','ID'),
     accessor: 'id',
@@ -1099,8 +1127,16 @@ const MekyasReports: React.FC = () => {
                 </div>
               )}
               {sendStatus === 'error' && (
-                <div className="flex items-center gap-2 text-red-700 font-bold animate-fade-in">
-                  <AlertTriangle className="h-5 w-5" /> {sendMessage}
+                <div className="flex flex-col items-center gap-3 text-red-700 font-bold animate-fade-in">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5" /> {sendMessage}
+                  </div>
+                  <button
+                    className="px-4 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700"
+                    onClick={() => handleSendReportSingle(modalReport)}
+                  >
+                    إعادة الإرسال
+                  </button>
                 </div>
               )}
             </React.Fragment>
@@ -1130,6 +1166,14 @@ const MekyasReports: React.FC = () => {
                   {result.status === 'success' ? <Check className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
                   <span className="font-bold">{result.reportName}</span>
                   <span className="text-xs">{result.message}</span>
+                  {result.status === 'error' && (
+                    <button
+                      className="ml-auto px-4 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700"
+                      onClick={() => handleResendSingleReport(result, idx)}
+                    >
+                      إعادة الإرسال
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

@@ -87,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       [path]: !prev[path]
     }));
   };
-  return <aside className={`fixed md:relative top-16 h-[calc(100vh-4rem)] w-64 bg-gradient-to-b from-blue-50 via-white to-blue-100 border-gray-200 shadow-lg transition-transform duration-300 ease-in-out z-10 ${positionClass || 'right-0 border-l'}`}>
+  return <aside className={`sticky top-16 h-[calc(100vh-4rem)] w-64 bg-gradient-to-b from-blue-50 via-white to-blue-100 border-gray-200 shadow-lg transition-transform duration-300 ease-in-out z-10 ${positionClass || 'right-0 border-l'}`}>
       <div className="h-full px-3 py-4 overflow-y-auto">
         <ul className="space-y-2">
           {menuItems.map((item, index) => (
