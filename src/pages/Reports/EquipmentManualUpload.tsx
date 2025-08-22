@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload } from 'lucide-react';
+import { Upload, Check, AlertTriangle } from 'lucide-react';
 
 const EquipmentManualUpload: React.FC = () => {
   // Main report fields
@@ -121,6 +121,43 @@ const EquipmentManualUpload: React.FC = () => {
     { key: 'result', label: 'نتيجة الإرسال' },
   ];
   const currentStepIndex = step - 1;
+
+  // State for modals and edit/send logic
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [sendStatus, setSendStatus] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState(form);
+
+  // State for progress
+  const [sendProgress, setSendProgress] = useState(0);
+
+  // إرسال التقرير
+  const handleSendReport = () => {
+    setSendStatus('sending');
+    setSendProgress(0);
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setSendProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        const isSuccess = Math.random() > 0.2;
+        setSendStatus(isSuccess ? 'success' : 'error');
+        if (isSuccess) {
+          setTimeout(() => {
+            setShowSendModal(false);
+            setSendStatus(null);
+            setSendProgress(0);
+          }, 1200);
+        }
+      }
+    }, 150);
+  };
+  // حفظ التعديلات
+  const handleSaveEdit = () => {
+    setForm(editForm);
+    setShowEditModal(false);
+  };
 
   return (
     <form className="max-w-[1600px] mx-auto p-8 bg-white rounded-2xl shadow-lg" method="POST" encType="multipart/form-data" style={{ fontFamily: 'Cairo, Tahoma, Arial', fontSize: '1.08rem' }}>
@@ -656,6 +693,7 @@ const EquipmentManualUpload: React.FC = () => {
                 <th className="px-4 py-2 border">عنوان التقرير</th>
                 <th className="px-4 py-2 border">تاريخ التقييم</th>
                 <th className="px-4 py-2 border">عدد الأصول</th>
+                <th className="px-4 py-2 border">الإجراءات</th>
               </tr>
             </thead>
             <tbody>
@@ -664,12 +702,101 @@ const EquipmentManualUpload: React.FC = () => {
                 <td className="px-4 py-2 border">{form.title}</td>
                 <td className="px-4 py-2 border">{form.valued_at}</td>
                 <td className="px-4 py-2 border">{assets.length}</td>
+                <td className="px-4 py-2 border">
+                  <button className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 font-bold mr-2" type="button" onClick={() => setShowSendModal(true)}>
+                    إرسال
+                  </button>
+                  <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 font-bold" type="button" onClick={() => setShowEditModal(true)}>
+                    تعديل
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
           <div className="flex justify-end">
             <button className="btn btn-primary px-8 py-3 text-lg" type="button" onClick={() => setStep(1)}>رفع تقرير جديد</button>
           </div>
+          {/* مودال الإرسال */}
+          {showSendModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-green-100 bg-opacity-70 backdrop-blur-sm">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-10 relative animate-fade-in border-2 border-blue-200">
+                <button className="absolute top-4 left-4 text-gray-500 hover:text-red-600 text-3xl font-bold" onClick={() => setShowSendModal(false)}>&times;</button>
+                <h3 className="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3">
+                  <Upload className="h-7 w-7" /> إرسال تقرير المعدات إلى نظام الهيئة
+                </h3>
+                <div className="mb-4 grid grid-cols-2 gap-4">
+                  <div className="font-bold text-gray-700">عنوان التقرير:</div>
+                  <div className="text-blue-900">{form.title}</div>
+                  <div className="font-bold text-gray-700 mt-2">رقم التقرير:</div>
+                  <div className="text-gray-900">{form.report_number || '---'}</div>
+                </div>
+                {sendStatus === null || sendStatus === 'sending' ? (
+                  <div className="w-full my-4">
+                    <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-4 bg-blue-500 transition-all duration-150" style={{ width: `${sendStatus === 'sending' ? sendProgress : 0}%` }}></div>
+                    </div>
+                    <div className="text-center text-blue-600 font-bold mt-2">{sendStatus === 'sending' ? `جاري الإرسال... ${sendProgress}%` : 'جاهز للإرسال'}</div>
+                  </div>
+                ) : null}
+                {sendStatus === 'success' && (
+                  <div className="flex items-center gap-2 text-green-700 font-bold animate-fade-in mt-6">
+                    <Check className="h-5 w-5" /> تم إرسال التقرير بنجاح إلى نظام الهيئة!
+                  </div>
+                )}
+                {sendStatus === 'error' && (
+                  <div className="flex flex-col items-center gap-2 text-red-700 font-bold animate-fade-in mt-6">
+                    <AlertTriangle className="h-5 w-5" /> فشل في إرسال التقرير، يرجى المحاولة مرة أخرى.
+                    <button className="mt-4 px-4 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700" onClick={handleSendReport}>إعادة الإرسال</button>
+                  </div>
+                )}
+                {sendStatus === null && (
+                  <div className="flex gap-4 justify-end mt-8">
+                    <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-bold hover:bg-gray-300" onClick={() => setShowSendModal(false)}>إلغاء</button>
+                    <button className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-700" onClick={handleSendReport}>تأكيد الإرسال</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {/* مودال التعديل */}
+          {showEditModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+              <div className="bg-white rounded-2xl shadow-lg p-8 max-w-2xl w-full relative overflow-y-auto max-h-[90vh]">
+                <button className="absolute top-4 left-4 text-gray-500 hover:text-red-600 text-2xl font-bold" onClick={() => setShowEditModal(false)}>&times;</button>
+                <h3 className="text-xl font-bold text-yellow-700 mb-4">تعديل بيانات التقرير</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div>
+                    <label className="block mb-2 font-semibold text-gray-700">عنوان التقرير</label>
+                    <input className="form-control w-full" type="text" value={editForm.title} onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="block mb-2 font-semibold text-gray-700">تاريخ التقييم</label>
+                    <input className="form-control w-full" type="date" value={editForm.valued_at} onChange={e => setEditForm(f => ({ ...f, valued_at: e.target.value }))} />
+                  </div>
+                  {/* أضف باقي الحقول حسب الحاجة */}
+                </div>
+                <h4 className="text-lg font-bold text-blue-800 mb-4">معلومات الأصول المرتبطة</h4>
+                <div className="space-y-4">
+                  {assets.map((asset, idx) => (
+                    <div key={idx} className="bg-gray-50 rounded-lg p-4">
+                      <div className="font-bold text-gray-700 mb-2">{asset.asset_name}</div>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>نوع الأصل: <span className="font-semibold">{asset.asset_type}</span></div>
+                        <div>القيمة: <span className="font-semibold text-green-700">{asset.value}</span></div>
+                        <div>المالك: <span className="font-semibold">{asset.owner_name}</span></div>
+                        <div>الدولة: <span className="font-semibold">{asset.country}</span></div>
+                        {/* أضف باقي بيانات الأصل */}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-4 justify-end mt-8">
+                  <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-bold hover:bg-gray-300" onClick={() => setShowEditModal(false)}>إلغاء</button>
+                  <button className="bg-yellow-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-yellow-700" onClick={handleSaveEdit}>حفظ التعديلات</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
       <style>{`

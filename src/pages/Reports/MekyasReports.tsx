@@ -1,111 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Upload, Check, AlertTriangle, Search, ChevronLeft, ArrowLeft, Filter, Calendar, MapPin, User, FileType, Hash, Building, RefreshCw, Loader, LogOut } from 'lucide-react';
+import { FileText, Upload, Check, AlertTriangle, Search, Filter, Calendar, MapPin, RefreshCw, Loader, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Table from '../../components/Common/Table';
-import ProgressBar from '../../components/Common/ProgressBar';
 import { useTr, useLanguage } from '../../context/LanguageContext';
-// Define workflow steps
-type WorkflowStep = 'select' | 'verify' | 'send' | 'result';
-const MekyasReports: React.FC = () => {
-  const tr = useTr();
-  const { lang } = useLanguage();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'automatic' | 'single'>('automatic');
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [progressStage, setProgressStage] = useState<'withdraw' | 'verify' | 'send'>('withdraw');
-  const [progressPercentage, setProgressPercentage] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [sendingProgress, setSendingProgress] = useState<Record<number, { progress: number; status: 'sending' | 'success' | 'error'; message?: string }>>({});
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentStep, setCurrentStep] = useState<WorkflowStep>('select');
-  const [processingResult, setProcessingResult] = useState<'success' | 'error' | null>(null);
-  const [verificationStatus, setVerificationStatus] = useState<Record<string, boolean>>({});
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-  const [searchFilters, setSearchFilters] = useState({
-    reportName: '',
-    location: '',
-    propertyType: '',
-    status: '',
-    dateFrom: '',
-    dateTo: '',
-    referenceNo: ''
-  });
 
-  // Check authentication on component mount
-  useEffect(() => {
-    const checkAuth = () => {
-      const authData = localStorage.getItem('mekyasAuth');
-      if (!authData) {
-        navigate('/auth/mekyas');
-        return;
-      }
-
-      try {
-        const auth = JSON.parse(authData);
-        // Check if token is still valid (24 hours)
-        const loginTime = new Date(auth.loginTime);
-        const now = new Date();
-        const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
-
-        if (hoursDiff > 24) {
-          localStorage.removeItem('mekyasAuth');
-          navigate('/auth/mekyas');
-          return;
-        }
-
-        // Set last update time from localStorage if exists
-        const lastUpdate = localStorage.getItem('mekyasLastUpdate');
-        if (lastUpdate) {
-          setLastUpdateTime(lastUpdate);
-        }
-      } catch (error) {
-        localStorage.removeItem('mekyasAuth');
-        navigate('/auth/mekyas');
-      }
-    };
-
-    checkAuth();
-  }, [navigate]);
-
-  // Function to update reports from Mekyas
-  const updateReportsFromMekyas = async () => {
-    setIsUpdating(true);
-    try {
-      // Simulate API call to Mekyas to fetch latest reports
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Update last update time
-      const now = new Date().toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-      setLastUpdateTime(now);
-      localStorage.setItem('mekyasLastUpdate', now);
-
-      // Here you would normally update the reportData state with new data
-      // For demo purposes, we'll just show success
-
-    } catch (error) {
-      console.error('Error updating reports:', error);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  // Function to logout
-  const handleLogout = () => {
-    localStorage.removeItem('mekyasAuth');
-    localStorage.removeItem('mekyasLastUpdate');
-    navigate('/auth/mekyas');
-  };
-
-  // Sample data for the table - Real Estate Reports
-  const reportData = [{
+// تعريف بيانات التقارير أعلى الملف
+const reportData = [
+  {
     id: 1,
     reportName: 'كشف العقارات السكنية - الرياض',
     reportType: 'PDF',
@@ -122,7 +22,8 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'أحمد محمد',
     department: 'قسم العقارات',
     quantity: 1
-  }, {
+  },
+  {
     id: 2,
     reportName: 'كشف العقارات التجارية - جدة',
     reportType: 'PDF',
@@ -139,7 +40,8 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'سارة أحمد',
     department: 'قسم العقارات',
     quantity: 1
-  }, {
+  },
+  {
     id: 3,
     reportName: 'كشف العقارات الصناعية - الدمام',
     reportType: 'PDF',
@@ -156,7 +58,8 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'محمد علي',
     department: 'قسم العقارات',
     quantity: 1
-  }, {
+  },
+  {
     id: 4,
     reportName: 'كشف العقارات السكنية - الطائف',
     reportType: 'PDF',
@@ -173,7 +76,8 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'فاطمة خالد',
     department: 'قسم العقارات',
     quantity: 1
-  }, {
+  },
+  {
     id: 5,
     reportName: 'كشف العقارات التجارية - أبها',
     reportType: 'PDF',
@@ -190,7 +94,8 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'عبدالله سعد',
     department: 'قسم العقارات',
     quantity: 1
-  }, {
+  },
+  {
     id: 6,
     reportName: 'كشف العقارات السكنية - تبوك',
     reportType: 'PDF',
@@ -207,7 +112,8 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'نورا حسن',
     department: 'قسم العقارات',
     quantity: 1
-  }, {
+  },
+  {
     id: 7,
     reportName: 'كشف العقارات الاستثمارية - حائل',
     reportType: 'PDF',
@@ -224,7 +130,8 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'خالد عمر',
     department: 'قسم العقارات',
     quantity: 1
-  }, {
+  },
+  {
     id: 8,
     reportName: 'كشف العقارات الزراعية - القصيم',
     reportType: 'PDF',
@@ -241,7 +148,393 @@ const MekyasReports: React.FC = () => {
     submittedBy: 'ريم محمد',
     department: 'قسم العقارات',
     quantity: 1
-  }];
+  },
+  {
+    id: 9,
+    reportName: 'كشف عقارات سكنية - المدينة',
+    reportType: 'PDF',
+    source: 'نظام العقارات',
+    size: '1.1 MB',
+    date: '2024/05/18',
+    status: 'مكتمل',
+    propertyType: 'شقة سكنية',
+    location: 'المدينة',
+    referenceNo: '065429',
+    area: '140 م²',
+    value: '900,000',
+    priority: 'منخفض',
+    submittedBy: 'سامي يوسف',
+    department: 'قسم العقارات',
+    quantity: 1
+  },
+  {
+    id: 10,
+    reportName: 'كشف عقارات تجارية - مكة',
+    reportType: 'PDF',
+    source: 'نظام العقارات',
+    size: '2.0 MB',
+    date: '2024/05/20',
+    status: 'قيد المراجعة',
+    propertyType: 'محل تجاري',
+    location: 'مكة',
+    referenceNo: '065430',
+    area: '100 م²',
+    value: '700,000',
+    priority: 'متوسط',
+    submittedBy: 'منى خالد',
+    department: 'قسم العقارات',
+    quantity: 1
+  },
+  {
+    id: 11,
+    reportName: 'كشف عقارات صناعية - ينبع',
+    reportType: 'PDF',
+    source: 'نظام العقارات',
+    size: '1.5 MB',
+    date: '2024/05/22',
+    status: 'مكتمل',
+    propertyType: 'مستودع صناعي',
+    location: 'ينبع',
+    referenceNo: '065431',
+    area: '900 م²',
+    value: '2,800,000',
+    priority: 'عالي',
+    submittedBy: 'علي فهد',
+    department: 'قسم العقارات',
+    quantity: 1
+  },
+  {
+    id: 12,
+    reportName: 'كشف عقارات زراعية - الجوف',
+    reportType: 'PDF',
+    source: 'نظام العقارات',
+    size: '3.2 MB',
+    date: '2024/05/25',
+    status: 'مكتمل',
+    propertyType: 'أرض زراعية',
+    location: 'الجوف',
+    referenceNo: '065432',
+    area: '3000 م²',
+    value: '2,200,000',
+    priority: 'منخفض',
+    submittedBy: 'سعيد منصور',
+    department: 'قسم العقارات',
+    quantity: 1
+  },
+  {
+    id: 13,
+    reportName: 'كشف عقارات استثمارية - نجران',
+    reportType: 'PDF',
+    source: 'نظام العقارات',
+    size: '4.5 MB',
+    date: '2024/05/28',
+    status: 'مكتمل',
+    propertyType: 'مجمع استثماري',
+    location: 'نجران',
+    referenceNo: '065433',
+    area: '1800 م²',
+    value: '5,500,000',
+    priority: 'عالي',
+    submittedBy: 'نواف صالح',
+    department: 'قسم العقارات',
+    quantity: 1
+  },
+  {
+    id: 14,
+    reportName: 'كشف عقارات سكنية - سكاكا',
+    reportType: 'PDF',
+    source: 'نظام العقارات',
+    size: '1.3 MB',
+    date: '2024/05/30',
+    status: 'قيد المراجعة',
+    propertyType: 'فيلا سكنية',
+    location: 'سكاكا',
+    referenceNo: '065434',
+    area: '350 م²',
+    value: '1,400,000',
+    priority: 'متوسط',
+    submittedBy: 'هند عبدالعزيز',
+    department: 'قسم العقارات',
+    quantity: 1
+  },
+  {
+    id: 15,
+    reportName: 'كشف عقارات تجارية - جازان',
+    reportType: 'PDF',
+    source: 'نظام العقارات',
+    size: '2.7 MB',
+    date: '2024/06/01',
+    status: 'مكتمل',
+    propertyType: 'مكتب تجاري',
+    location: 'جازان',
+    referenceNo: '065435',
+    area: '220 م²',
+    value: '1,200,000',
+    priority: 'منخفض',
+    submittedBy: 'بدر الحربي',
+    department: 'قسم العقارات',
+    quantity: 1
+  }
+];
+
+const MekyasReports: React.FC = () => {
+  const tr = useTr();
+  const { lang } = useLanguage();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'automatic' | 'single'>('automatic');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+
+  const [singleSearchFilters, setSingleSearchFilters] = useState({
+    referenceNo: '',
+    reportName: '',
+    location: '',
+    propertyType: '',
+    status: '',
+    dateFrom: '',
+    dateTo: ''
+  });
+  const [singleSearchResults, setSingleSearchResults] = useState<any[]>([]);
+  const [singleSearchPerformed, setSingleSearchPerformed] = useState(false);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<'view' | 'edit' | 'delete' | 'send' | 'sending' | null>(null);
+  const [modalReport, setModalReport] = useState<any>(null);
+  const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [sendMessage, setSendMessage] = useState('');
+
+  const [reports, setReports] = useState(reportData);
+  const [editForm, setEditForm] = useState<any>(null);
+
+  const [searchFilters, setSearchFilters] = useState({
+    reportName: '',
+    location: '',
+    propertyType: '',
+    status: '',
+    dateFrom: '',
+    dateTo: '',
+    referenceNo: ''
+  });
+
+  const [bulkSendModalOpen, setBulkSendModalOpen] = useState(false);
+  const [bulkSendStatus, setBulkSendStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [bulkSendResults, setBulkSendResults] = useState<any[]>([]);
+
+  const [sendProgress, setSendProgress] = useState(0);
+  const [bulkSendProgress, setBulkSendProgress] = useState(0);
+
+  // --- Pagination State ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
+  const filteredData = reports.filter(report => {
+    const basicMatch = searchFilters.referenceNo === '' ||
+      (report.reportName?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase()) ||
+      (report.source?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase()) ||
+      (report.location?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase()) ||
+      (report.submittedBy?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase()) ||
+      (report.referenceNo?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase());
+
+    const advancedMatch =
+      (searchFilters.reportName === '' || (report.reportName?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase())) &&
+      (searchFilters.location === '' || (report.location?.toLowerCase() || '').includes(searchFilters.location.toLowerCase())) &&
+      (searchFilters.propertyType === '' || (report.propertyType?.toLowerCase() || '').includes(searchFilters.propertyType.toLowerCase())) &&
+      (searchFilters.status === '' || report.status === searchFilters.status) &&
+      (searchFilters.referenceNo === '' || (report.referenceNo?.toLowerCase() || '').includes(searchFilters.referenceNo.toLowerCase())) &&
+      (searchFilters.dateFrom === '' || new Date(report.date) >= new Date(searchFilters.dateFrom)) &&
+      (searchFilters.dateTo === '' || new Date(report.date) <= new Date(searchFilters.dateTo));
+
+    return basicMatch && advancedMatch;
+  });
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleSingleSearch = () => {
+    const results = reports.filter(report => {
+      return (
+        (singleSearchFilters.referenceNo === '' || (report.referenceNo?.toLowerCase() || '').includes(singleSearchFilters.referenceNo.toLowerCase())) &&
+        (singleSearchFilters.reportName === '' || (report.reportName?.toLowerCase() || '').includes(singleSearchFilters.reportName.toLowerCase())) &&
+        (singleSearchFilters.location === '' || (report.location?.toLowerCase() || '').includes(singleSearchFilters.location.toLowerCase())) &&
+        (singleSearchFilters.propertyType === '' || (report.propertyType?.toLowerCase() || '').includes(singleSearchFilters.propertyType.toLowerCase())) &&
+        (singleSearchFilters.status === '' || report.status === singleSearchFilters.status) &&
+        (singleSearchFilters.dateFrom === '' || new Date(report.date) >= new Date(singleSearchFilters.dateFrom)) &&
+        (singleSearchFilters.dateTo === '' || new Date(report.date) <= new Date(singleSearchFilters.dateTo))
+      );
+    });
+    setSingleSearchResults(results);
+    setSingleSearchPerformed(true);
+  };
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const authData = localStorage.getItem('mekyasAuth');
+      if (!authData) {
+        navigate('/auth/mekyas');
+        return;
+      }
+
+      try {
+        const auth = JSON.parse(authData);
+        const loginTime = new Date(auth.loginTime);
+        const now = new Date();
+        const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
+
+        if (hoursDiff > 24) {
+          localStorage.removeItem('mekyasAuth');
+          navigate('/auth/mekyas');
+          return;
+        }
+
+        const lastUpdate = localStorage.getItem('mekyasLastUpdate');
+        if (lastUpdate) {
+          setLastUpdateTime(lastUpdate);
+        }
+      } catch (error) {
+        localStorage.removeItem('mekyasAuth');
+        navigate('/auth/mekyas');
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  const updateReportsFromMekyas = async () => {
+    setIsUpdating(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      const now = new Date().toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      setLastUpdateTime(now);
+      localStorage.setItem('mekyasLastUpdate', now);
+    } catch (error) {
+      console.error('Error updating reports:', error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('mekyasAuth');
+    localStorage.removeItem('mekyasLastUpdate');
+    navigate('/auth/mekyas');
+  };
+
+  const handleViewReport = (row: any) => {
+    setModalReport(row);
+    setModalType('view');
+    setModalOpen(true);
+  };
+
+  const handleEditReport = (row: any) => {
+    setEditForm({ ...row });
+    setModalReport(row);
+    setModalType('edit');
+    setModalOpen(true);
+  };
+
+  const handleEditFormChange = (field: string, value: any) => {
+    setEditForm({ ...editForm, [field]: value });
+  };
+
+  const handleEditFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setReports(reports.map(r => r.id === editForm.id ? { ...editForm } : r));
+    setModalOpen(false);
+  };
+
+  const handleDeleteReport = (reportId: number) => {
+    setModalReport(reports.find(r => r.id === reportId));
+    setModalType('delete');
+    setModalOpen(true);
+  };
+
+  const confirmDeleteReport = () => {
+    setReports(reports.filter(r => r.id !== modalReport.id));
+    setModalOpen(false);
+    setModalReport(null);
+  };
+
+  const handleSendReport = (row: any) => {
+    setModalReport(row);
+    setModalType('sending');
+    setModalOpen(true);
+    setSendStatus('sending');
+    setSendProgress(0);
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setSendProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        const isSuccess = Math.random() > 0.1;
+        setSendStatus(isSuccess ? 'success' : 'error');
+        setSendMessage(isSuccess ? `تم إرسال التقرير بنجاح إلى نظام الهيئة - رقم المرجع: ${row.referenceNo}` : 'فشل في الإرسال - خطأ في الاتصال بنظام الهيئة');
+      }
+    }, 150);
+  };
+
+  const handleBulkDelete = () => {
+    setReports(reports.filter((_, idx) => !selectedRows.includes(idx)));
+    setSelectedRows([]);
+  };
+
+  const handleViewReportSingle = (report: any) => {
+    setModalReport(report);
+    setModalType('view');
+    setModalOpen(true);
+  };
+
+  const handleSendReportSingle = (report: any) => {
+    setModalReport(report);
+    setModalType('sending');
+    setModalOpen(true);
+    setSendStatus('sending');
+    setSendProgress(0);
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setSendProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        const isSuccess = Math.random() > 0.1;
+        setSendStatus(isSuccess ? 'success' : 'error');
+        setSendMessage(isSuccess ? `تم إرسال التقرير بنجاح إلى نظام الهيئة - رقم المرجع: ${report.referenceNo}` : 'فشل في الإرسال - خطأ في الاتصال بنظام الهيئة');
+      }
+    }, 150);
+  };
+
+  const handleBulkSend = () => {
+    setBulkSendModalOpen(true);
+    setBulkSendStatus('sending');
+    setBulkSendProgress(0);
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setBulkSendProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        const results = selectedRows.map(idx => {
+          const report = filteredData[idx];
+          const isSuccess = Math.random() > 0.1;
+          return {
+            ...report,
+            status: isSuccess ? 'success' : 'error',
+            message: isSuccess ? `تم إرسال التقرير بنجاح - رقم المرجع: ${report.referenceNo}` : 'فشل في الإرسال'
+          };
+        });
+        setBulkSendResults(results);
+        setBulkSendStatus('success');
+      }
+    }, 150);
+  };
+
   const columns = [{
     header: tr('الرقم','ID'),
     accessor: 'id',
@@ -355,7 +648,34 @@ const MekyasReports: React.FC = () => {
             {value}
           </span>;
     }
+  }, {
+    header: 'الإجراءات',
+    accessor: 'actions',
+    render: (_: any, row: any) => (
+      <div className="flex items-center justify-center gap-2">
+        <div className="sm:hidden relative">
+          <button className="p-2 rounded-full hover:bg-gray-100" onClick={e => { e.stopPropagation(); handleViewReport(row); }}>
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+          </button>
+        </div>
+        <div className="hidden sm:flex items-center gap-2">
+          <button className="action-btn action-view px-2 py-1 rounded text-blue-600 hover:bg-blue-50 border border-blue-200 flex items-center gap-1" title="عرض" onClick={() => handleViewReport(row)}>
+            <FileText className="h-4 w-4" /> <span className="font-bold">عرض</span>
+          </button>
+          <button className="action-btn action-edit px-2 py-1 rounded text-yellow-600 hover:bg-yellow-50 border border-yellow-200 flex items-center gap-1" title="تعديل" onClick={() => handleEditReport(row)}>
+            <i className="fa fa-edit" /> <span className="font-bold">تعديل</span>
+          </button>
+          <button className="action-btn action-delete px-2 py-1 rounded text-red-600 hover:bg-red-50 border border-red-200 flex items-center gap-1" title="حذف" onClick={() => handleDeleteReport(row.id)}>
+            <i className="fa fa-trash" /> <span className="font-bold">حذف</span>
+          </button>
+          <button className="action-btn action-send px-2 py-1 rounded text-green-600 hover:bg-green-50 border border-green-200 flex items-center gap-1" title="إرسال" onClick={() => handleSendReport(row)}>
+            <Upload className="h-4 w-4" /> <span className="font-bold">إرسال</span>
+          </button>
+        </div>
+      </div>
+    )
   }];
+
   const handleRowSelect = (rowId: number) => {
     if (selectedRows.includes(rowId)) {
       setSelectedRows(selectedRows.filter(id => id !== rowId));
@@ -363,1018 +683,461 @@ const MekyasReports: React.FC = () => {
       setSelectedRows([...selectedRows, rowId]);
     }
   };
-  const handleSelectAll = () => {
-    if (selectedRows.length === reportData.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(reportData.map((_, index) => index));
-    }
-  };
-  const startProcess = () => {
-    setCurrentStep('verify');
-    // Initialize verification status for all selected reports
-    const initialStatus: Record<string, boolean> = {};
-    selectedRows.forEach(rowId => {
-      initialStatus[rowId] = true;
-    });
-    setVerificationStatus(initialStatus);
-  };
-  const startSendingProcess = async () => {
-    setCurrentStep('send');
-    setIsProcessing(true);
-    setSendingProgress({});
 
-    // Start sending reports one by one with slight delays
-    const selectedReports = selectedRows.map(index => reportData[index]);
-
-    for (let i = 0; i < selectedReports.length; i++) {
-      const reportIndex = selectedRows[i];
-      const report = selectedReports[i];
-
-      // Add small delay between starting each report (0.5 seconds)
-      if (i > 0) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-
-      // Start sending this report (don't wait for completion)
-      simulateReportSending(reportIndex, report);
-    }
-
-    setIsProcessing(false);
-  };
-  const cancelProcess = () => {
-    setIsProcessing(false);
-    setCurrentStep('select');
-  };
-  const resetWorkflow = () => {
-    setCurrentStep('select');
-    setSelectedRows([]);
-    setProcessingResult(null);
-    setProgressPercentage(0);
-    setIsProcessing(false);
-    setSendingProgress({});
-  };
-
-  // Simulate sending individual reports to authority system
-  const simulateReportSending = async (reportIndex: number, reportData: any) => {
-    return new Promise<{ success: boolean; message?: string }>((resolve) => {
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += Math.random() * 15 + 5; // Random progress between 5-20%
-
-        setSendingProgress(prev => ({
-          ...prev,
-          [reportIndex]: {
-            progress: Math.min(progress, 100),
-            status: 'sending'
-          }
-        }));
-
-        if (progress >= 100) {
-          clearInterval(interval);
-
-          // Simulate random success/failure (90% success rate)
-          const isSuccess = Math.random() > 0.1;
-
-          setSendingProgress(prev => ({
-            ...prev,
-            [reportIndex]: {
-              progress: 100,
-              status: isSuccess ? 'success' : 'error',
-              message: isSuccess
-                ? `تم إرسال التقرير بنجاح - رقم المرجع: REF-${Date.now().toString().slice(-6)}`
-                : 'فشل في الإرسال - خطأ في الاتصال بنظام الهيئة'
-            }
-          }));
-
-          resolve({
-            success: isSuccess,
-            message: isSuccess
-              ? `تم إرسال التقرير بنجاح`
-              : 'فشل في الإرسال'
-          });
-        }
-      }, 200); // Update every 200ms
-    });
-  };
-  const toggleVerificationStatus = (rowId: number) => {
-    setVerificationStatus({
-      ...verificationStatus,
-      [rowId]: !verificationStatus[rowId]
-    });
-  };
-  const filteredData = reportData.filter(report => {
-    // Basic search
-    const basicMatch = searchTerm === '' ||
-      (report.reportName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (report.source?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (report.location?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (report.submittedBy?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (report.referenceNo?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-
-    // Advanced search filters
-    const advancedMatch =
-      (searchFilters.reportName === '' || (report.reportName?.toLowerCase() || '').includes(searchFilters.reportName.toLowerCase())) &&
-      (searchFilters.location === '' || (report.location?.toLowerCase() || '').includes(searchFilters.location.toLowerCase())) &&
-      (searchFilters.propertyType === '' || (report.propertyType?.toLowerCase() || '').includes(searchFilters.propertyType.toLowerCase())) &&
-      (searchFilters.status === '' || report.status === searchFilters.status) &&
-      (searchFilters.referenceNo === '' || (report.referenceNo?.toLowerCase() || '').includes(searchFilters.referenceNo.toLowerCase())) &&
-      (searchFilters.dateFrom === '' || new Date(report.date) >= new Date(searchFilters.dateFrom)) &&
-      (searchFilters.dateTo === '' || new Date(report.date) <= new Date(searchFilters.dateTo));
-
-    return basicMatch && advancedMatch;
-  });
-
-  // Workflow steps component
-  const renderWorkflowSteps = () => {
-    const steps = [
-      { id: 'select', name: 'اختيار التقارير' },
-      { id: 'verify', name: 'التحقق من البيانات' },
-      { id: 'send', name: 'إرسال التقارير' },
-      { id: 'result', name: 'النتيجة' }
-    ];
-
-    const currentStepIndex = steps.findIndex(s => s.id === currentStep);
-
-    return (
-      <div className="mb-8">
-        <div className="w-full bg-white border border-gray-200 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            {steps.map((step, stepIdx) => (
-              <div key={step.id} className="flex items-center flex-1">
-                <div className="flex items-center">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold ${
-                    currentStepIndex === stepIdx
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : currentStepIndex > stepIdx
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-200 text-gray-500'
-                  }`}>
-                    {currentStepIndex > stepIdx ? (
-                      <Check className="h-6 w-6" />
-                    ) : (
-                      <span>{stepIdx + 1}</span>
-                    )}
-                  </div>
-                  <div className="mr-4">
-                    <p className={`text-lg font-semibold ${
-                      currentStepIndex === stepIdx ? 'text-blue-600' : currentStepIndex > stepIdx ? 'text-green-600' : 'text-gray-500'
-                    }`}>
-                      {step.name}
+  const renderActiveTabContent = () => {
+    switch (activeTab) {
+      case 'automatic':
+        return (
+          <div>
+            <div className="w-full flex justify-center mb-8 sticky top-0 z-40 bg-white border-b border-gray-200">
+              <nav className="flex gap-2">
+                <button className={`py-3 px-8 text-center border-b-2 text-lg font-bold rounded-t-lg transition-colors duration-150 ${activeTab === 'automatic' ? 'border-blue-600 text-blue-700 bg-blue-50' : 'border-transparent text-gray-500 hover:text-blue-600 hover:bg-gray-50'}`} onClick={() => setActiveTab('automatic')}>
+                  سحب تقارير العقارات التلقائي
+                </button>
+                <button className={`py-3 px-8 text-center border-b-2 text-lg font-bold rounded-t-lg transition-colors duration-150 ${activeTab === 'single' ? 'border-blue-600 text-blue-700 bg-blue-50' : 'border-transparent text-gray-500 hover:text-blue-600 hover:bg-gray-50'}`} onClick={() => setActiveTab('single')}>
+                  سحب تقرير عقارات واحد
+                </button>
+              </nav>
+            </div>
+            {/* نموذج البحث المتقدم أعلى جدول التقارير */}
+            <div className="w-full max-w-4xl mx-auto mb-8 p-6 bg-white rounded-xl shadow border border-blue-100">
+              <form className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end" onSubmit={e => {e.preventDefault();}}>
+                <input
+                  type="text"
+                  className="border border-blue-200 rounded-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-150 col-span-2"
+                  placeholder="اسم التقرير..."
+                  value={searchFilters.reportName}
+                  onChange={e => setSearchFilters({ ...searchFilters, reportName: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="border border-blue-200 rounded-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-150 col-span-2"
+                  placeholder="الموقع..."
+                  value={searchFilters.location}
+                  onChange={e => setSearchFilters({ ...searchFilters, location: e.target.value })}
+                />
+                <select
+                  className="border border-blue-200 rounded-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-150 col-span-2 bg-white"
+                  value={searchFilters.status}
+                  onChange={e => setSearchFilters({ ...searchFilters, status: e.target.value })}
+                >
+                  <option value="">الحالة...</option>
+                  <option value="مكتمل">مكتمل</option>
+                  <option value="قيد المراجعة">قيد المراجعة</option>
+                  <option value="مرفوض">مرفوض</option>
+                </select>
+                <input
+                  type="text"
+                  className="border border-blue-200 rounded-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-150 col-span-2"
+                  placeholder="رقم المرجع..."
+                  value={searchFilters.referenceNo}
+                  onChange={e => setSearchFilters({ ...searchFilters, referenceNo: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="border border-blue-200 rounded-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-150 col-span-2"
+                  placeholder="نوع العقار..."
+                  value={searchFilters.propertyType}
+                  onChange={e => setSearchFilters({ ...searchFilters, propertyType: e.target.value })}
+                />
+                <input
+                  type="date"
+                  className="border border-blue-200 rounded-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-150 col-span-1"
+                  value={searchFilters.dateFrom}
+                  onChange={e => setSearchFilters({ ...searchFilters, dateFrom: e.target.value })}
+                />
+                <input
+                  type="date"
+                  className="border border-blue-200 rounded-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-150 col-span-1"
+                  value={searchFilters.dateTo}
+                  onChange={e => setSearchFilters({ ...searchFilters, dateTo: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="bg-blue-600 text-white font-bold rounded-lg px-8 py-3 col-span-2 mt-2 md:mt-0 hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-lg text-lg"
+                  onClick={() => {}}
+                  title="بحث"
+                >
+                  <Search className="h-5 w-5" /> بحث
+                </button>
+              </form>
+            </div>
+            <div className="p-6">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      سحب تقارير العقارات التلقائي
+                    </h3>
+                    <p className="text-gray-600">
+                      اختر تقارير العقارات التي ترغب في سحبها وإرسالها تلقائياً إلى نظام الهيئة
                     </p>
                   </div>
+                  <div className="flex flex-col items-end">
+                    <button
+                      onClick={updateReportsFromMekyas}
+                      disabled={isUpdating}
+                      className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
+                        isUpdating
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-green-600 text-white hover:bg-green-700'
+                      }`}
+                    >
+                      {isUpdating ? (
+                        <>
+                          <Loader className="h-4 w-4 animate-spin ml-2" />
+                          جاري التحديث...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="h-4 w-4 ml-2" />
+                          تحديث من مقياس
+                        </>
+                      )}
+                    </button>
+                    {lastUpdateTime && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        آخر تحديث: {lastUpdateTime}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                {stepIdx !== steps.length - 1 && (
-                  <div className="flex-1 mx-4">
-                    <div className="h-1 bg-gray-200 rounded-full">
-                      <div
-                        className={`h-1 rounded-full transition-all duration-300 ${
-                          currentStepIndex > stepIdx ? 'bg-green-600' : 'bg-gray-200'
-                        }`}
-                        style={{ width: currentStepIndex > stepIdx ? '100%' : '0%' }}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 font-bold disabled:opacity-50"
+                      disabled={selectedRows.length === 0}
+                      onClick={handleBulkSend}
+                    >
+                      <Upload className="inline-block h-5 w-5 mr-2" /> إرسال التقارير المحددة
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 font-bold disabled:opacity-50"
+                      disabled={selectedRows.length === 0}
+                      onClick={handleBulkDelete}
+                    >
+                      <i className="fa fa-trash mr-2" /> حذف التقارير المحددة
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full max-w-[98vw] mx-auto rounded-lg shadow">
+                <table className="min-w-full divide-y divide-gray-200 text-sm table-fixed">
+                  <thead className="bg-blue-50">
+                    <tr>
+                      <th className="px-4 py-3 text-center font-bold text-gray-700">تحديد</th>
+                      {columns.map((col, idx) => (
+                        <th key={idx} className={`px-4 py-3 text-center font-bold text-gray-700 ${[2,3,6,8,9].includes(idx) ? 'hidden sm:table-cell' : ''}`}>{col.header}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedData.length === 0 ? (
+                      <tr>
+                        <td colSpan={columns.length + 1} className="py-12 text-center text-gray-500 font-bold">لا توجد تقارير</td>
+                      </tr>
+                    ) : (
+                      paginatedData.map((row, idx) => (
+                        <tr key={row.id} className={`transition-colors duration-150 ${selectedRows.includes(idx + (currentPage-1)*itemsPerPage) ? 'bg-blue-50 border-blue-200' : (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50')} hover:bg-blue-100`}>
+                          <td className="px-4 py-3 text-center">
+                            <input type="checkbox" checked={selectedRows.includes(idx + (currentPage-1)*itemsPerPage)} onChange={() => handleRowSelect(idx + (currentPage-1)*itemsPerPage)} className="h-5 w-5 text-blue-600 rounded focus:ring-blue-500" />
+                          </td>
+                          {columns.map((col, colIdx) => (
+                            col.accessor === 'actions'
+                              ? (
+                                <td key={colIdx} className={`px-4 py-3 text-center align-middle ${[2,3,6,8,9].includes(colIdx) ? 'hidden sm:table-cell' : ''}`}>{col.render ? col.render(null, row) : null}</td>
+                              )
+                              : (
+                                <td key={colIdx} className={`px-4 py-3 text-center align-middle ${[2,3,6,8,9].includes(colIdx) ? 'hidden sm:table-cell' : ''}`}>{col.render ? col.render(row[col.accessor], row) : row[col.accessor]}</td>
+                              )
+                          ))}
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-6">
+                    <button
+                      className="px-3 py-1 rounded-lg bg-gray-100 text-gray-600 font-bold hover:bg-blue-100 disabled:opacity-50"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                    >السابق</button>
+                    {[...Array(totalPages)].map((_, i) => (
+                      <button
+                        key={i}
+                        className={`px-3 py-1 rounded-lg font-bold transition-colors ${currentPage === i+1 ? 'bg-blue-600 text-white shadow' : 'bg-gray-100 text-gray-700 hover:bg-blue-50'}`}
+                        onClick={() => setCurrentPage(i+1)}
+                      >{i+1}</button>
+                    ))}
+                    <button
+                      className="px-3 py-1 rounded-lg bg-gray-100 text-gray-600 font-bold hover:bg-blue-100 disabled:opacity-50"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                    >التالي</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      case 'single':
+        return (
+          <div>
+            <div className="w-full flex justify-center mb-8 sticky top-0 z-40 bg-white border-b border-gray-200">
+              <nav className="flex gap-2">
+                <button className={`py-3 px-8 text-center border-b-2 text-lg font-bold rounded-t-lg transition-colors duration-150 ${activeTab === 'automatic' ? 'border-blue-600 text-blue-700 bg-blue-50' : 'border-transparent text-gray-500 hover:text-blue-600 hover:bg-gray-50'}`} onClick={() => setActiveTab('automatic')}>
+                  سحب تقارير العقارات التلقائي
+                </button>
+                <button className={`py-3 px-8 text-center border-b-2 text-lg font-bold rounded-t-lg transition-colors duration-150 ${activeTab === 'single' ? 'border-blue-600 text-blue-700 bg-blue-50' : 'border-transparent text-gray-500 hover:text-blue-600 hover:bg-gray-50'}`} onClick={() => setActiveTab('single')}>
+                  سحب تقرير عقارات واحد
+                </button>
+              </nav>
+            </div>
+            <div className="max-w-xl mx-auto mt-12 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+              <h2 className="text-2xl font-bold text-blue-700 mb-4 flex items-center gap-2">
+                <FileText className="h-7 w-7" /> سحب تقرير عقارات واحد
+              </h2>
+              <p className="mb-6 text-gray-600">ابحث عن تقرير عقاري محدد عبر رقم المرجع أو اسم التقرير أو عبر البحث المتقدم، ثم اعرض التفاصيل أو أرسل التقرير مباشرة.</p>
+              <form className="flex flex-col gap-4 mb-6" onSubmit={e => {e.preventDefault(); handleSingleSearch();}}>
+                <input
+                  type="text"
+                  className="border rounded-lg px-4 py-2 text-lg focus:ring-2 focus:ring-blue-400"
+                  placeholder="رقم المرجع..."
+                  value={singleSearchFilters.referenceNo}
+                  onChange={e => setSingleSearchFilters({ ...singleSearchFilters, referenceNo: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="border rounded-lg px-4 py-2 text-lg focus:ring-2 focus:ring-blue-400"
+                  placeholder="اسم التقرير..."
+                  value={singleSearchFilters.reportName}
+                  onChange={e => setSingleSearchFilters({ ...singleSearchFilters, reportName: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="flex items-center gap-2 bg-gray-100 text-blue-700 font-bold rounded-lg px-4 py-2 hover:bg-blue-50 transition-colors"
+                  onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                >
+                  <Filter className="h-5 w-5" /> بحث متقدم
+                </button>
+                {showAdvancedSearch && (
+                  <div className="grid grid-cols-1 gap-3 mt-2">
+                    <input
+                      type="text"
+                      className="border rounded-lg px-4 py-2 text-lg focus:ring-2 focus:ring-blue-400"
+                      placeholder="الموقع..."
+                      value={singleSearchFilters.location}
+                      onChange={e => setSingleSearchFilters({ ...singleSearchFilters, location: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      className="border rounded-lg px-4 py-2 text-lg focus:ring-2 focus:ring-blue-400"
+                      placeholder="نوع العقار..."
+                      value={singleSearchFilters.propertyType}
+                      onChange={e => setSingleSearchFilters({ ...singleSearchFilters, propertyType: e.target.value })}
+                    />
+                    <select
+                      className="border rounded-lg px-4 py-2 text-lg focus:ring-2 focus:ring-blue-400"
+                      value={singleSearchFilters.status}
+                      onChange={e => setSingleSearchFilters({ ...singleSearchFilters, status: e.target.value })}
+                    >
+                      <option value="">الحالة...</option>
+                      <option value="مكتمل">مكتمل</option>
+                      <option value="قيد المراجعة">قيد المراجعة</option>
+                      <option value="مرفوض">مرفوض</option>
+                    </select>
+                    <div className="flex gap-2">
+                      <input
+                        type="date"
+                        className="border rounded-lg px-4 py-2 text-lg focus:ring-2 focus:ring-blue-400 w-1/2"
+                        value={singleSearchFilters.dateFrom}
+                        onChange={e => setSingleSearchFilters({ ...singleSearchFilters, dateFrom: e.target.value })}
+                      />
+                      <input
+                        type="date"
+                        className="border rounded-lg px-4 py-2 text-lg focus:ring-2 focus:ring-blue-400 w-1/2"
+                        value={singleSearchFilters.dateTo}
+                        onChange={e => setSingleSearchFilters({ ...singleSearchFilters, dateTo: e.target.value })}
                       />
                     </div>
                   </div>
                 )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Advanced search component
-  const renderAdvancedSearch = () => {
-    if (!showAdvancedSearch) return null;
-
-    return (
-      <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">البحث المتقدم</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">اسم التقرير</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchFilters.reportName}
-              onChange={(e) => setSearchFilters({...searchFilters, reportName: e.target.value})}
-              placeholder="ابحث في اسم التقرير..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">الموقع</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchFilters.location}
-              onChange={(e) => setSearchFilters({...searchFilters, location: e.target.value})}
-              placeholder="ابحث في الموقع..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">نوع العقار</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchFilters.propertyType}
-              onChange={(e) => setSearchFilters({...searchFilters, propertyType: e.target.value})}
-              placeholder="ابحث في نوع العقار..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">الحالة</label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchFilters.status}
-              onChange={(e) => setSearchFilters({...searchFilters, status: e.target.value})}
-            >
-              <option value="">جميع الحالات</option>
-              <option value="مكتمل">مكتمل</option>
-              <option value="قيد المراجعة">قيد المراجعة</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">من تاريخ</label>
-            <input
-              type="date"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchFilters.dateFrom}
-              onChange={(e) => setSearchFilters({...searchFilters, dateFrom: e.target.value})}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">إلى تاريخ</label>
-            <input
-              type="date"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchFilters.dateTo}
-              onChange={(e) => setSearchFilters({...searchFilters, dateTo: e.target.value})}
-            />
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end space-x-2">
-          <button
-            onClick={() => setSearchFilters({
-              reportName: '',
-              location: '',
-              propertyType: '',
-              status: '',
-              dateFrom: '',
-              dateTo: '',
-              referenceNo: ''
-            })}
-            className="px-4 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-          >
-            مسح الفلاتر
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  const renderSelectStep = () => {
-    return <div>
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                سحب تقارير العقارات التلقائي
-              </h3>
-              <p className="text-gray-600">
-                اختر تقارير العقارات التي ترغب في سحبها وإرسالها تلقائياً إلى نظام الهيئة
-              </p>
-            </div>
-            <div className="flex flex-col items-end">
-              <button
-                onClick={updateReportsFromMekyas}
-                disabled={isUpdating}
-                className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isUpdating
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-600 text-white hover:bg-green-700'
-                }`}
-              >
-                {isUpdating ? (
-                  <>
-                    <Loader className="h-4 w-4 animate-spin ml-2" />
-                    جاري التحديث...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="h-4 w-4 ml-2" />
-                    تحديث من مقياس
-                  </>
-                )}
-              </button>
-              {lastUpdateTime && (
-                <p className="text-xs text-gray-500 mt-1">
-                  آخر تحديث: {lastUpdateTime}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Search Section */}
-          <div className="mb-4 space-y-4">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
-                  type="text"
-                  placeholder="البحث في التقارير..."
-                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <button
-                onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-                className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
-                  showAdvancedSearch
-                    ? 'bg-blue-50 border-blue-300 text-blue-700'
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <Filter className="h-4 w-4" />
-                بحث متقدم
-              </button>
-            </div>
-
-            {renderAdvancedSearch()}
-          </div>
-
-          <Table columns={columns} data={filteredData} selectable={true} selectedRows={selectedRows} onRowSelect={handleRowSelect} onSelectAll={handleSelectAll} />
-        </div>
-
-        {/* Continue Button - Always visible but disabled when no selection */}
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
-          {selectedRows.length > 0 ? (
-            <h4 className="font-medium text-gray-900 mb-3">
-              تم اختيار {selectedRows.length} تقارير
-            </h4>
-          ) : (
-            <h4 className="font-medium text-gray-500 mb-3">
-              لم يتم اختيار أي تقارير
-            </h4>
-          )}
-          <div className="flex justify-end">
-            <button
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedRows.length > 0
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-              onClick={startProcess}
-              disabled={selectedRows.length === 0}
-            >
-              متابعة للتحقق من البيانات
-            </button>
-          </div>
-        </div>
-      </div>;
-  };
-  const renderVerifyStep = () => {
-    return <div>
-        <div className="flex items-center mb-6">
-          <button onClick={() => setCurrentStep('select')} className="flex items-center text-blue-600 hover:text-blue-800 ml-4">
-            <ChevronLeft className="h-5 w-5 ml-1" />
-            <span>العودة للاختيار</span>
-          </button>
-          <h3 className="text-lg font-medium text-gray-900">
-            التحقق من بيانات التقارير
-          </h3>
-        </div>
-        <div className="space-y-6 mb-6">
-          {selectedRows.map(rowIndex => {
-          const report = reportData[rowIndex];
-          return <div key={rowIndex} className="bg-white p-4 rounded-lg border border-gray-200">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h4 className="font-medium text-lg text-gray-900">
-                      {report.reportName}
-                    </h4>
-                    <p className="text-sm text-gray-500">
-                      {report.referenceNo}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <span className={`mr-2 text-sm ${verificationStatus[rowIndex] ? 'text-green-600' : 'text-red-600'}`}>
-                      {verificationStatus[rowIndex] ? 'تم التحقق' : 'لم يتم التحقق'}
-                    </span>
-                    <div className="relative inline-block w-10 ml-2 align-middle select-none">
-                      <input type="checkbox" id={`verification-${rowIndex}`} className="sr-only" checked={verificationStatus[rowIndex]} onChange={() => toggleVerificationStatus(rowIndex)} />
-                      <label htmlFor={`verification-${rowIndex}`} className={`block overflow-hidden h-6 rounded-full cursor-pointer ${verificationStatus[rowIndex] ? 'bg-green-500' : 'bg-gray-300'}`}>
-                        <span className={`absolute block h-5 w-5 rounded-full bg-white border border-gray-300 top-0.5 transition-transform duration-200 ease-in-out ${verificationStatus[rowIndex] ? 'right-0.5 transform -translate-x-0' : 'right-7'}`}></span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">المصدر:</span>
-                      <span className="text-sm font-medium">
-                        {report.source}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">نوع العقار:</span>
-                      <span className="text-sm font-medium">
-                        {report.propertyType}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">الموقع:</span>
-                      <span className="text-sm font-medium">
-                        {report.location}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">الكمية:</span>
-                      <span className="text-sm font-medium">
-                        {report.quantity}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">الحالة:</span>
-                      <span className="text-sm font-medium">
-                        {report.status}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-500">التاريخ:</span>
-                      <span className="text-sm font-medium">{report.date}</span>
-                    </div>
-                  </div>
-                </div>
-                {!verificationStatus[rowIndex] && <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                    <p className="text-sm text-red-600">
-                      يرجى التحقق من بيانات هذا التقرير قبل المتابعة
-                    </p>
-                  </div>}
-              </div>;
-        })}
-        </div>
-        <div className="flex justify-end">
-          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors ml-3" onClick={() => setCurrentStep('select')}>
-            العودة
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onClick={startSendingProcess} disabled={Object.values(verificationStatus).some(status => !status)}>
-            بدء عملية الإرسال
-          </button>
-        </div>
-      </div>;
-  };
-  const renderSendStep = () => {
-    const selectedReports = selectedRows.map(index => reportData[index]);
-
-    return <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-6">
-          إرسال التقارير إلى نظام الهيئة
-        </h3>
-
-        <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-          <div className="mb-6">
-            <p className="text-gray-600 mb-6">
-              جاري إرسال {selectedReports.length} تقرير إلى نظام الهيئة. يرجى الانتظار حتى اكتمال العملية.
-            </p>
-
-            {/* Individual Report Progress */}
-            <div className="space-y-4">
-              {selectedReports.map((report, index) => {
-                const reportIndex = selectedRows[index];
-                const progress = sendingProgress[reportIndex];
-
-                return (
-                  <div key={reportIndex} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center">
-                        <FileText className="h-5 w-5 text-blue-600 ml-2" />
-                        <div>
-                          <h4 className="font-medium text-gray-900">{report.reportName}</h4>
-                          <p className="text-sm text-gray-600">رقم المرجع: {report.referenceNo}</p>
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white font-bold rounded-lg px-4 py-2 hover:bg-blue-700 transition-colors"
+                >
+                  <Search className="h-5 w-5 inline-block mr-1" /> بحث
+                </button>
+              </form>
+              {singleSearchPerformed && (
+                singleSearchResults.length > 0 ? (
+                  <div className="space-y-4">
+                    {singleSearchResults.map((result, idx) => (
+                      <div key={idx} className="bg-blue-50 rounded-lg p-4 mb-2">
+                        <div className="font-bold text-gray-700 mb-2">اسم التقرير</div>
+                        <div className="text-lg text-blue-900">{result.reportName}</div>
+                        <div className="font-bold text-gray-700 mt-2 mb-1">رقم المرجع</div>
+                        <div className="text-lg text-gray-900">{result.referenceNo}</div>
+                        <div className="font-bold text-gray-700 mt-2 mb-1">الحالة</div>
+                        <div className="text-lg text-green-700">{result.status}</div>
+                        <div className="flex gap-3 mt-6 justify-end">
+                          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700" onClick={() => handleViewReportSingle(result)}>
+                            <FileText className="h-5 w-5 inline-block mr-1" /> عرض التفاصيل
+                          </button>
+                          <button className="px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700" onClick={() => handleSendReportSingle(result)}>
+                            <Upload className="h-5 w-5 inline-block mr-1" /> إرسال التقرير
+                          </button>
                         </div>
                       </div>
-
-                      {/* Status Icon */}
-                      <div className="flex items-center">
-                        {!progress && (
-                          <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-xs text-gray-500">{index + 1}</span>
-                          </div>
-                        )}
-                        {progress?.status === 'sending' && (
-                          <div className="w-6 h-6">
-                            <Loader className="h-6 w-6 text-blue-600 animate-spin" />
-                          </div>
-                        )}
-                        {progress?.status === 'success' && (
-                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                            <Check className="h-4 w-4 text-green-600" />
-                          </div>
-                        )}
-                        {progress?.status === 'error' && (
-                          <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="mb-3">
-                      <div className="flex justify-between text-sm text-gray-600 mb-1">
-                        <span>
-                          {!progress && 'في الانتظار...'}
-                          {progress?.status === 'sending' && 'جاري الإرسال...'}
-                          {progress?.status === 'success' && 'تم الإرسال بنجاح'}
-                          {progress?.status === 'error' && 'فشل في الإرسال'}
-                        </span>
-                        <span>{progress?.progress || 0}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full transition-all duration-300 ${
-                            progress?.status === 'success' ? 'bg-green-500' :
-                            progress?.status === 'error' ? 'bg-red-500' :
-                            'bg-blue-500'
-                          }`}
-                          style={{ width: `${progress?.progress || 0}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Status Message */}
-                    {progress?.message && (
-                      <div className={`text-sm p-2 rounded ${
-                        progress.status === 'success'
-                          ? 'bg-green-50 text-green-700 border border-green-200'
-                          : 'bg-red-50 text-red-700 border border-red-200'
-                      }`}>
-                        {progress.message}
-                      </div>
-                    )}
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Overall Status */}
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-blue-600 rounded-full animate-pulse ml-2"></div>
-                <p className="text-sm text-blue-700">
-                  {Object.keys(sendingProgress).length === 0 && 'استعداد لبدء الإرسال...'}
-                  {Object.keys(sendingProgress).length > 0 && Object.keys(sendingProgress).length < selectedReports.length &&
-                    `جاري إرسال التقرير ${Object.keys(sendingProgress).length} من ${selectedReports.length}`}
-                  {Object.keys(sendingProgress).length === selectedReports.length &&
-                    Object.values(sendingProgress).every(p => p.status !== 'sending') &&
-                    'اكتملت عملية الإرسال'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-between">
-            <button
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
-              onClick={cancelProcess}
-              disabled={Object.values(sendingProgress).some(p => p.status === 'sending')}
-            >
-              إلغاء العملية
-            </button>
-
-            {Object.keys(sendingProgress).length === selectedReports.length &&
-             Object.values(sendingProgress).every(p => p.status !== 'sending') && (
-              <button
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                onClick={() => setCurrentStep('result')}
-              >
-                عرض النتائج
-              </button>
-            )}
-          </div>
-        </div>
-      </div>;
-  };
-  const renderResultStep = () => {
-    const selectedReports = selectedRows.map(index => reportData[index]);
-    const successCount = Object.values(sendingProgress).filter(p => p.status === 'success').length;
-    const errorCount = Object.values(sendingProgress).filter(p => p.status === 'error').length;
-    const totalCount = selectedReports.length;
-
-    return <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-6">
-          نتائج إرسال التقارير
-        </h3>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="flex items-center">
-              <div className="bg-blue-100 p-2 rounded-full ml-3">
-                <FileText className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">إجمالي التقارير</p>
-                <p className="text-2xl font-bold text-gray-900">{totalCount}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg border border-green-200">
-            <div className="flex items-center">
-              <div className="bg-green-100 p-2 rounded-full ml-3">
-                <Check className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">نجح الإرسال</p>
-                <p className="text-2xl font-bold text-green-600">{successCount}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg border border-red-200">
-            <div className="flex items-center">
-              <div className="bg-red-100 p-2 rounded-full ml-3">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">فشل الإرسال</p>
-                <p className="text-2xl font-bold text-red-600">{errorCount}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Overall Status */}
-        <div className={`bg-white p-6 rounded-lg border mb-6 ${
-          errorCount === 0 ? 'border-green-200' : errorCount === totalCount ? 'border-red-200' : 'border-yellow-200'
-        }`}>
-          <div className="text-center py-4">
-            <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${
-              errorCount === 0 ? 'bg-green-100' : errorCount === totalCount ? 'bg-red-100' : 'bg-yellow-100'
-            }`}>
-              {errorCount === 0 ? (
-                <Check className="h-8 w-8 text-green-600" />
-              ) : errorCount === totalCount ? (
-                <AlertTriangle className="h-8 w-8 text-red-600" />
-              ) : (
-                <AlertTriangle className="h-8 w-8 text-yellow-600" />
+                ) : (
+                  <div className="text-center text-gray-500 mt-8">لا يوجد تقرير مطابق للبحث.</div>
+                )
               )}
             </div>
-
-            <h4 className="text-xl font-medium mb-2">
-              {errorCount === 0 ? 'تمت العملية بنجاح' :
-               errorCount === totalCount ? 'فشلت العملية' :
-               'اكتملت العملية جزئياً'}
-            </h4>
-
-            <p className="text-gray-600 mb-4">
-              {errorCount === 0 ? `تم إرسال جميع التقارير (${successCount}) بنجاح إلى نظام الهيئة` :
-               errorCount === totalCount ? 'فشل في إرسال جميع التقارير، يرجى المحاولة مرة أخرى' :
-               `تم إرسال ${successCount} تقرير بنجاح، وفشل إرسال ${errorCount} تقرير`}
-            </p>
           </div>
-        </div>
-
-        {/* Detailed Results */}
-        <div className="bg-white rounded-lg border border-gray-200 mb-6">
-          <div className="p-4 border-b border-gray-200">
-            <h4 className="text-lg font-medium text-gray-900">تفاصيل النتائج</h4>
-          </div>
-
-          <div className="divide-y divide-gray-200">
-            {selectedReports.map((report, index) => {
-              const reportIndex = selectedRows[index];
-              const progress = sendingProgress[reportIndex];
-
-              return (
-                <div key={reportIndex} className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ml-3 ${
-                        progress?.status === 'success' ? 'bg-green-100' : 'bg-red-100'
-                      }`}>
-                        {progress?.status === 'success' ? (
-                          <Check className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <AlertTriangle className="h-4 w-4 text-red-600" />
-                        )}
-                      </div>
-
-                      <div>
-                        <h5 className="font-medium text-gray-900">{report.reportName}</h5>
-                        <p className="text-sm text-gray-600">رقم المرجع: {report.referenceNo}</p>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        progress?.status === 'success'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {progress?.status === 'success' ? 'تم الإرسال' : 'فشل الإرسال'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {progress?.message && (
-                    <div className={`mt-2 p-2 rounded text-sm ${
-                      progress.status === 'success'
-                        ? 'bg-green-50 text-green-700'
-                        : 'bg-red-50 text-red-700'
-                    }`}>
-                      {progress.message}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-center space-x-4 space-x-reverse">
-          <button
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            onClick={resetWorkflow}
-          >
-            إرسال تقارير جديدة
-          </button>
-
-          {errorCount > 0 && (
-            <button
-              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              onClick={() => {
-                // Reset only failed reports for retry
-                const failedIndexes = selectedRows.filter(index =>
-                  sendingProgress[index]?.status === 'error'
-                );
-                setSelectedRows(failedIndexes);
-                setSendingProgress({});
-                setCurrentStep('verify');
-              }}
-            >
-              إعادة إرسال التقارير الفاشلة ({errorCount})
-            </button>
-          )}
-        </div>
-      </div>;
-  };
-  const renderActiveTabContent = () => {
-    switch (activeTab) {
-      case 'automatic':
-        switch (currentStep) {
-          case 'select':
-            return renderSelectStep();
-          case 'verify':
-            return renderVerifyStep();
-          case 'send':
-            return renderSendStep();
-          case 'result':
-            return renderResultStep();
-          default:
-            return renderSelectStep();
-        }
-      case 'single':
-        switch (currentStep) {
-          case 'select':
-            return <div>
-                <div className="mb-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    سحب تقرير عقارات واحد
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    ابحث عن تقرير عقارات محدد وقم بسحبه وإرساله إلى نظام الهيئة
-                  </p>
-
-                  {/* Single Report Search Section */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-                    <h4 className="text-lg font-medium text-gray-900 mb-4">البحث عن التقرير</h4>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          <Search className="h-4 w-4 inline ml-1" />
-                          رقم المرجع
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="أدخل رقم المرجع (مثال: 065428)"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          value={searchFilters.referenceNo}
-                          onChange={(e) => setSearchFilters({...searchFilters, referenceNo: e.target.value})}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          <FileText className="h-4 w-4 inline ml-1" />
-                          اسم التقرير
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="أدخل اسم التقرير أو جزء منه"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          value={searchFilters.reportName}
-                          onChange={(e) => setSearchFilters({...searchFilters, reportName: e.target.value})}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          <MapPin className="h-4 w-4 inline ml-1" />
-                          الموقع
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="أدخل اسم المدينة أو المنطقة"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          value={searchFilters.location}
-                          onChange={(e) => setSearchFilters({...searchFilters, location: e.target.value})}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          <Building className="h-4 w-4 inline ml-1" />
-                          نوع العقار
-                        </label>
-                        <select
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          value={searchFilters.propertyType}
-                          onChange={(e) => setSearchFilters({...searchFilters, propertyType: e.target.value})}
-                        >
-                          <option value="">جميع الأنواع</option>
-                          <option value="فيلا سكنية">فيلا سكنية</option>
-                          <option value="مكتب تجاري">مكتب تجاري</option>
-                          <option value="مستودع صناعي">مستودع صناعي</option>
-                          <option value="شقة سكنية">شقة سكنية</option>
-                          <option value="محل تجاري">محل تجاري</option>
-                          <option value="مجمع استثماري">مجمع استثماري</option>
-                          <option value="أرض زراعية">أرض زراعية</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <button
-                        className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                        onClick={() => {
-                          // Simulate search and select the first matching report
-                          const matchingReport = filteredData[0];
-                          if (matchingReport) {
-                            setSelectedRows([0]);
-                          }
-                        }}
-                      >
-                        <Search className="h-5 w-5 inline ml-2" />
-                        البحث عن التقرير
-                      </button>
-                      <button
-                        onClick={() => setSearchFilters({
-                          reportName: '',
-                          location: '',
-                          propertyType: '',
-                          status: '',
-                          dateFrom: '',
-                          dateTo: '',
-                          referenceNo: ''
-                        })}
-                        className="px-6 py-3 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        مسح الحقول
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Search Results */}
-                  {filteredData.length > 0 && (searchFilters.referenceNo || searchFilters.reportName || searchFilters.location || searchFilters.propertyType) && (
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-                      <h4 className="text-lg font-medium text-gray-900 mb-4">نتائج البحث</h4>
-                      <div className="space-y-3">
-                        {filteredData.slice(0, 3).map((report, index) => (
-                          <div
-                            key={report.id}
-                            className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                              selectedRows.includes(index)
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            onClick={() => setSelectedRows([index])}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center mb-2">
-                                  <FileText className="h-5 w-5 text-blue-600 ml-2" />
-                                  <h5 className="font-medium text-gray-900">{report.reportName}</h5>
-                                </div>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                                  <div>
-                                    <span className="font-medium">المرجع:</span> {report.referenceNo}
-                                  </div>
-                                  <div>
-                                    <span className="font-medium">الموقع:</span> {report.location}
-                                  </div>
-                                  <div>
-                                    <span className="font-medium">النوع:</span> {report.propertyType}
-                                  </div>
-                                  <div>
-                                    <span className="font-medium">التاريخ:</span> {report.date}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="mr-4">
-                                {selectedRows.includes(index) ? (
-                                  <div className="flex items-center text-blue-600">
-                                    <Check className="h-5 w-5 ml-1" />
-                                    <span className="text-sm font-medium">محدد</span>
-                                  </div>
-                                ) : (
-                                  <span className="text-sm text-gray-500">انقر للتحديد</span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      {filteredData.length > 3 && (
-                        <p className="text-sm text-gray-500 mt-3 text-center">
-                          وجد {filteredData.length} تقرير، يتم عرض أول 3 نتائج
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Continue Button */}
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
-                  <h4 className="font-medium text-gray-500 mb-3">
-                    {selectedRows.length > 0 ? `تم اختيار التقرير للسحب` : 'ابحث عن التقرير وحدده للمتابعة'}
-                  </h4>
-                  <div className="flex justify-end">
-                    <button
-                      className={`px-6 py-3 rounded-lg transition-colors font-medium ${
-                        selectedRows.length > 0
-                          ? 'bg-blue-600 text-white hover:bg-blue-700'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                      disabled={selectedRows.length === 0}
-                      onClick={startProcess}
-                    >
-                      {selectedRows.length > 0 ? 'سحب التقرير والمتابعة' : 'حدد تقرير للمتابعة'}
-                    </button>
-                  </div>
-                </div>
-              </div>;
-          case 'verify':
-            return renderVerifyStep();
-          case 'send':
-            return renderSendStep();
-          case 'result':
-            return renderResultStep();
-          default:
-            return renderSelectStep();
-        }
-
+        );
+      default:
+        return null;
     }
   };
-  return <div className="w-full">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">تقارير العقارات</h1>
-          <p className="text-gray-600">إدارة سحب وإرسال تقارير نظام العقارات</p>
+
+  return <div className="w-full">{renderActiveTabContent()}
+    {modalOpen && modalReport && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-green-100 bg-opacity-70 backdrop-blur-sm">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-10 relative animate-fade-in border-2 border-blue-200">
+          <button className="absolute top-4 left-4 text-gray-500 hover:text-red-600 text-3xl font-bold" onClick={() => setModalOpen(false)}>
+            &times;
+          </button>
+          {modalType === 'view' && (
+            <React.Fragment>
+              <h3 className="text-2xl font-extrabold text-blue-700 mb-6 flex items-center gap-3">
+                <FileText className="h-7 w-7" /> تفاصيل التقرير العقاري
+              </h3>
+              <div className="grid grid-cols-2 gap-4 text-lg">
+                <div><span className="font-bold text-gray-700">اسم التقرير:</span> <span className="text-blue-900">{modalReport.reportName}</span></div>
+                <div><span className="font-bold text-gray-700">رقم المرجع:</span> <span className="text-gray-900">{modalReport.referenceNo}</span></div>
+                <div><span className="font-bold text-gray-700">الحالة:</span> <span className="text-green-700">{modalReport.status}</span></div>
+                <div><span className="font-bold text-gray-700">نوع العقار:</span> <span>{modalReport.propertyType}</span></div>
+                <div><span className="font-bold text-gray-700">الموقع:</span> <span>{modalReport.location}</span></div>
+                <div><span className="font-bold text-gray-700">المساحة:</span> <span>{modalReport.area}</span></div>
+                <div><span className="font-bold text-gray-700">القيمة:</span> <span className="text-green-700">{modalReport.value} ريال</span></div>
+                <div><span className="font-bold text-gray-700">الأولوية:</span> <span>{modalReport.priority}</span></div>
+                <div><span className="font-bold text-gray-700">المقدم من:</span> <span>{modalReport.submittedBy}</span></div>
+                <div><span className="font-bold text-gray-700">القسم:</span> <span>{modalReport.department}</span></div>
+              </div>
+            </React.Fragment>
+          )}
+          {modalType === 'edit' && editForm && (
+            <>
+              <h3 className="text-2xl font-extrabold text-yellow-700 mb-6 flex items-center gap-3">
+                <i className="fa fa-edit text-yellow-600 text-2xl" /> تعديل بيانات التقرير
+              </h3>
+              <form className="grid grid-cols-2 gap-4" onSubmit={handleEditFormSubmit}>
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.reportName} onChange={e => handleEditFormChange('reportName', e.target.value)} placeholder="اسم التقرير" />
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.referenceNo} onChange={e => handleEditFormChange('referenceNo', e.target.value)} placeholder="رقم المرجع" />
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.propertyType} onChange={e => handleEditFormChange('propertyType', e.target.value)} placeholder="نوع العقار" />
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.location} onChange={e => handleEditFormChange('location', e.target.value)} placeholder="الموقع" />
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.area} onChange={e => handleEditFormChange('area', e.target.value)} placeholder="المساحة" />
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.value} onChange={e => handleEditFormChange('value', e.target.value)} placeholder="القيمة" />
+                <select className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.status} onChange={e => handleEditFormChange('status', e.target.value)}>
+                  <option value="مكتمل">مكتمل</option>
+                  <option value="قيد المراجعة">قيد المراجعة</option>
+                  <option value="مرفوض">مرفوض</option>
+                </select>
+                <select className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.priority} onChange={e => handleEditFormChange('priority', e.target.value)}>
+                  <option value="عالي">عالي</option>
+                  <option value="متوسط">متوسط</option>
+                  <option value="منخفض">منخفض</option>
+                </select>
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.submittedBy} onChange={e => handleEditFormChange('submittedBy', e.target.value)} placeholder="المقدم من" />
+                <input type="text" className="border rounded-lg px-3 py-2 text-lg focus:ring-2 focus:ring-yellow-400" value={editForm.department} onChange={e => handleEditFormChange('department', e.target.value)} placeholder="القسم" />
+                <div className="col-span-2 flex justify-end gap-3 mt-4">
+                  <button type="button" className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300" onClick={() => setModalOpen(false)}>إلغاء</button>
+                  <button type="submit" className="px-4 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700">حفظ التعديلات</button>
+                </div>
+              </form>
+            </>
+          )}
+          {modalType === 'delete' && (
+            <>
+              <h3 className="text-2xl font-extrabold text-red-700 mb-6 flex items-center gap-3">
+                <i className="fa fa-trash text-red-600 text-2xl" /> حذف التقرير العقاري
+              </h3>
+              <div className="mb-6 text-lg text-gray-700">هل أنت متأكد أنك تريد حذف التقرير <span className="font-bold text-blue-900">{modalReport.reportName}</span>؟ لا يمكن التراجع عن هذه العملية.</div>
+              <div className="flex justify-end gap-3">
+                <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300" onClick={() => setModalOpen(false)}>إلغاء</button>
+                <button className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700" onClick={confirmDeleteReport}>تأكيد الحذف</button>
+              </div>
+            </>
+          )}
+          {modalType === 'sending' && (
+            <React.Fragment>
+              <h3 className="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3">
+                <Upload className="h-7 w-7" /> إرسال التقرير إلى نظام الهيئة
+              </h3>
+              <div className="mb-4 grid grid-cols-2 gap-4">
+                <div className="font-bold text-gray-700">اسم التقرير:</div>
+                <div className="text-blue-900">{modalReport.reportName}</div>
+                <div className="font-bold text-gray-700 mt-2">رقم المرجع:</div>
+                <div className="text-gray-900">{modalReport.referenceNo}</div>
+              </div>
+              {sendStatus === 'sending' && (
+                <div className="w-full my-4">
+                  <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-4 bg-blue-500 transition-all duration-150" style={{ width: `${sendProgress}%` }}></div>
+                  </div>
+                  <div className="text-center text-blue-600 font-bold mt-2">جاري الإرسال... {sendProgress}%</div>
+                </div>
+              )}
+              {sendStatus === 'success' && (
+                <div className="flex items-center gap-2 text-green-700 font-bold animate-fade-in">
+                  <Check className="h-5 w-5" /> {sendMessage}
+                </div>
+              )}
+              {sendStatus === 'error' && (
+                <div className="flex items-center gap-2 text-red-700 font-bold animate-fade-in">
+                  <AlertTriangle className="h-5 w-5" /> {sendMessage}
+                </div>
+              )}
+            </React.Fragment>
+          )}
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center px-4 py-2 text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
-        >
-          <LogOut className="h-4 w-4 ml-2" />
-          تسجيل الخروج
-        </button>
       </div>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="border-b border-gray-200">
-          <nav className="flex -mb-px">
-            <button className={`py-4 px-6 text-center border-b-2 text-sm font-medium ${activeTab === 'automatic' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`} onClick={() => setActiveTab('automatic')}>
-              سحب تقارير العقارات التلقائي
-            </button>
-            <button className={`py-4 px-6 text-center border-b-2 text-sm font-medium ${activeTab === 'single' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`} onClick={() => setActiveTab('single')}>
-              سحب تقرير عقارات واحد
-            </button>
-          </nav>
-        </div>
-        <div className="p-6">
-          {/* Show workflow steps for all tabs */}
-          {renderWorkflowSteps()}
-          {renderActiveTabContent()}
+    )}
+    {bulkSendModalOpen && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-green-100 bg-opacity-70 backdrop-blur-sm">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-10 relative animate-fade-in border-2 border-blue-200">
+          <button className="absolute top-4 left-4 text-gray-500 hover:text-red-600 text-3xl font-bold" onClick={() => setBulkSendModalOpen(false)}>&times;</button>
+          <h3 className="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3">
+            <Upload className="h-7 w-7" /> إرسال التقارير المحددة
+          </h3>
+          {bulkSendStatus === 'sending' && (
+            <div className="w-full my-4">
+              <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-4 bg-blue-500 transition-all duration-150" style={{ width: `${bulkSendProgress}%` }}></div>
+              </div>
+              <div className="text-center text-blue-600 font-bold mt-2">جاري الإرسال... {bulkSendProgress}%</div>
+            </div>
+          )}
+          {bulkSendStatus === 'success' && (
+            <div className="space-y-4">
+              {bulkSendResults.map((result, idx) => (
+                <div key={idx} className={`p-3 rounded-lg flex items-center gap-3 ${result.status === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                  {result.status === 'success' ? <Check className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
+                  <span className="font-bold">{result.reportName}</span>
+                  <span className="text-xs">{result.message}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-    </div>;
+    )}
+  </div>;
 };
+
 export default MekyasReports;
