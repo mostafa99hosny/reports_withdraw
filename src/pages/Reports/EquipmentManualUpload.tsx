@@ -14,42 +14,21 @@ const EquipmentManualUpload: React.FC = () => {
     special_assumptions: '',
     value: '',
     currency_id: '1',
-    report_file: null as File | null,
     excel_file: null as File | null,
-    pdf_files: [] as File[],
-    report_number: '', // إضافة رقم التقرير
+    report_number: '',
   });
 
   // Step state
   const [step, setStep] = useState(1);
 
-  // State for clients, users, valuers, hasUser, and assets
+  // State for clients, users, valuers, hasUser
   const [clients, setClients] = useState([{ name: '', telephone: '', email: '' }]);
   const [users, setUsers] = useState([{ name: '' }]);
   const [valuers, setValuers] = useState([{ id: '', contribution: '100' }]);
   const [hasUser, setHasUser] = useState(false);
-  const [assets, setAssets] = useState([
-    {
-      asset_type: '',
-      asset_name: '',
-      asset_usage_id: '',
-      value_base_id: '',
-      inspected_at: '',
-      value: '',
-      production_capacity: '',
-      production_capacity_measuring_unit: '',
-      owner_name: '',
-      product_type: '',
-      market_method: '',
-      cost_method: '',
-      value_method_1: '',
-      value_method_2: '',
-      country: '',
-      region: '',
-      city: '',
-      district: '',
-    },
-  ]);
+
+  // Result status column
+  const [resultStatus, setResultStatus] = useState<'جديد' | 'مكتمل جزئي' | ' مكتمل'>('جديد');
 
   // Handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -81,44 +60,11 @@ const EquipmentManualUpload: React.FC = () => {
     setValuers(vs => vs.map((v, idx) => idx === i ? { ...v, [name.split('[')[2].replace(']', '')]: value } : v));
   };
 
-  const addAsset = () => setAssets(as => [
-    ...as,
-    {
-      asset_type: '',
-      asset_name: '',
-      asset_usage_id: '',
-      value_base_id: '',
-      inspected_at: '',
-      value: '',
-      production_capacity: '',
-      production_capacity_measuring_unit: '',
-      owner_name: '',
-      product_type: '',
-      market_method: '',
-      cost_method: '',
-      value_method_1: '',
-      value_method_2: '',
-      country: '',
-      region: '',
-      city: '',
-      district: '',
-    },
-  ]);
-  const handleAssetChange = (i: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setAssets(as => as.map((a, idx) => idx === i ? { ...a, [name]: value } : a));
-  };
-  const handleSaveAssets = () => {
-    // ...send data logic...
-    setStep(4);
-  };
-
-  // Stepper component for upload steps
+  // Stepper component for upload steps (Reordered and simplified)
   const steps = [
-    { key: 'uploadFile', label: 'رفع ملف التقرير (Excel/PDF)' },
     { key: 'reportDetails', label: 'بيانات التقرير' },
-    { key: 'assetDetails', label: 'بيانات الأصل' },
-    { key: 'result', label: 'نتيجة الإرسال' },
+    { key: 'uploadExcel', label: 'رفع تقرير Excel' },
+    { key: 'result', label: 'نتيجة ارسال التقارير' },
   ];
   const currentStepIndex = step - 1;
 
@@ -153,6 +99,7 @@ const EquipmentManualUpload: React.FC = () => {
       }
     }, 150);
   };
+
   // حفظ التعديلات
   const handleSaveEdit = () => {
     setForm(editForm);
@@ -179,79 +126,9 @@ const EquipmentManualUpload: React.FC = () => {
           ))}
         </div>
       </div>
-      {/* Step 1: Upload Excel and PDF Files (same logic as ManualUpload) */}
+
+      {/* Step 1: Report Details */}
       {step === 1 && (
-        <div className="space-y-8">
-          {/* Excel Upload */}
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center text-center bg-white hover:border-blue-400 transition-colors">
-            <Upload className="mx-auto mb-2 text-gray-400" size={40} />
-            <div className="mb-2 font-semibold text-gray-700">اسحب ملف Excel أو انقر للتحميل</div>
-            <div className="mb-4 text-sm text-gray-500">يجب أن يكون الملف بصيغة XLSX أو XLS</div>
-            <input
-              type="file"
-              accept=".xlsx,.xls"
-              id="excel-upload"
-              name="excel_file"
-              className="hidden"
-              onChange={e => {
-                const file = e.target.files?.[0] || null;
-                setForm(f => ({ ...f, excel_file: file }));
-              }}
-            />
-            <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all cursor-pointer mt-2" onClick={() => document.getElementById('excel-upload')?.click()}>
-              اختيار ملف Excel
-            </button>
-            {form.excel_file && (
-              <div className="mt-2 text-green-600 text-sm">تم اختيار الملف: {form.excel_file.name}</div>
-            )}
-          </div>
-          {/* PDF Upload */}
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center text-center bg-white hover:border-green-400 transition-colors">
-            <Upload className="mx-auto mb-2 text-gray-400" size={40} />
-            <div className="mb-2 font-semibold text-gray-700">اسحب ملفات PDF المرتبطة أو انقر للتحميل</div>
-            <div className="mb-4 text-sm text-gray-500">يمكنك تحميل عدة ملفات PDF</div>
-            <input
-              type="file"
-              accept=".pdf"
-              id="pdf-upload"
-              name="pdf_files"
-              multiple
-              className="hidden"
-              onChange={e => {
-                const files = Array.from(e.target.files || []);
-                setForm(f => ({ ...f, pdf_files: files }));
-              }}
-            />
-            <button type="button" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all cursor-pointer mt-2" onClick={() => document.getElementById('pdf-upload')?.click()}>
-              اختيار ملفات PDF
-            </button>
-            {form.pdf_files && form.pdf_files.length > 0 && (
-              <div className="mt-2 space-y-1">
-                {form.pdf_files.map((file: File, idx: number) => (
-                  <div key={idx} className="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded text-sm text-green-700">
-                    <span>{file.name}</span>
-                    <button type="button" className="text-red-500 hover:text-red-700" onClick={() => {
-                      setForm(f => ({ ...f, pdf_files: f.pdf_files.filter((_: File, i: number) => i !== idx) }));
-                    }}>×</button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              className="px-6 py-2 rounded border border-blue-600 bg-white text-blue-600 font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200"
-              type="button"
-              onClick={() => setStep(2)}
-              disabled={!form.excel_file || !form.pdf_files || form.pdf_files.length === 0}
-            >
-              متابعة
-            </button>
-          </div>
-        </div>
-      )}
-      {/* Step 2: Full Report Details Form (modern grid layout) */}
-      {step === 2 && (
         <div className="bg-white rounded-2xl shadow p-8 mb-8">
           <h2 className="text-2xl font-bold mb-6 text-blue-900">تقرير جديد</h2>
           <h3 className="text-xl font-semibold mb-4 text-blue-800">معلومات التقرير</h3>
@@ -339,11 +216,8 @@ const EquipmentManualUpload: React.FC = () => {
                 <option value="6">جنيه سوداني</option>
               </select>
             </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">ملف أصل التقرير *</label>
-              <input className="form-control w-full h-12 text-lg" name="report_file" type="file" accept="application/pdf" onChange={handleChange} />
-            </div>
           </div>
+
           {/* بيانات العميل */}
           <h3 className="text-xl font-semibold mb-4 text-blue-800">بيانات العميل</h3>
           {clients.map((client, idx) => (
@@ -368,6 +242,7 @@ const EquipmentManualUpload: React.FC = () => {
               <button className="btn btn-outline-danger px-6 py-2 text-lg" type="button" onClick={removeClient}>حذف عميل</button>
             )}
           </div>
+
           {/* مستخدمون آخرون */}
           <div className="form-check mb-6">
             <input className="form-check-input" id="showUser" type="checkbox" name="has_user" value="1" checked={hasUser} onChange={e => setHasUser(e.target.checked)} />
@@ -392,6 +267,7 @@ const EquipmentManualUpload: React.FC = () => {
               </div>
             </div>
           )}
+
           {/* بيانات المقيمين */}
           <h3 className="text-xl font-semibold mb-4 text-blue-800">بيانات المقيمين</h3>
           {valuers.map((valuer, idx) => (
@@ -474,14 +350,8 @@ const EquipmentManualUpload: React.FC = () => {
               <button className="btn btn-outline-danger px-6 py-2 text-lg" type="button" onClick={removeValuer}>حذف مقيم</button>
             )}
           </div>
+
           <div className="flex flex-row gap-4 justify-end mt-10">
-            <button
-              className="btn btn-outline-primary btn-lg px-8 py-3 text-lg"
-              type="button"
-              onClick={() => setStep(1)}
-            >
-              رجوع
-            </button>
             <input
               className="btn btn-outline-primary btn-lg px-8 py-3 text-lg"
               name="save"
@@ -489,225 +359,117 @@ const EquipmentManualUpload: React.FC = () => {
               value="حفظ وإغلاق"
               onClick={e => {
                 e.preventDefault();
-                setStep(1); // العودة للخطوة السابقة بعد الحفظ
+                setStep(1);
               }}
             />
             <button
               className="btn btn-primary btn-lg px-8 py-3 text-lg"
               type="button"
-              onClick={() => setStep(3)}
+              onClick={() => setStep(2)}
             >
               حفظ واستمرار
             </button>
           </div>
         </div>
       )}
-      {step === 3 && (
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-          <h2 className="text-2xl font-bold mb-6 text-blue-900">بيانات الأصل</h2>
-          {assets.map((asset, idx) => (
-            <div key={idx} className="mb-10">
-              <h3 className="text-xl font-semibold mb-4 text-blue-800">معلومات الأصل</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">نوع الأصل محل التقييم *</label>
-                  <input className="form-control w-full h-12 text-lg" name="asset_type" type="text" value={asset.asset_type} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">اسم/وصف الأصل *</label>
-                  <input className="form-control w-full h-12 text-lg" name="asset_name" type="text" value={asset.asset_name} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">استخدام/قطاع الأصل محل التقييم *</label>
-                  <select className="form-control w-full h-12 text-lg" name="asset_usage_id" value={asset.asset_usage_id} onChange={e => handleAssetChange(idx, e)}>
-                    <option value="">اختر</option>
-                    <option value="زراعي">زراعي</option>
-                    <option value="بحري">بحري</option>
-                    <option value="المواصلات">المواصلات</option>
-                    <option value="طيران">طيران</option>
-                    <option value="الخدمات اللوجستية">الخدمات اللوجستية</option>
-                    <option value="طباعة">طباعة</option>
-                    <option value="بناء">بناء</option>
-                    <option value="الغزل والنسيج">الغزل والنسيج</option>
-                    <option value="ضيافة">ضيافة</option>
-                    <option value="التعدين">التعدين</option>
-                    <option value="التعبئة والتغليف">التعبئة والتغليف</option>
-                    <option value="الاتصالات">الاتصالات</option>
-                    <option value="النفط والغاز">النفط والغاز</option>
-                    <option value="المستشفيات">المستشفيات</option>
-                    <option value="الأدوية">الأدوية</option>
-                    <option value="مأكولات ومشروبات">مأكولات ومشروبات</option>
-                    <option value="مياه">مياه</option>
-                    <option value="مياه الصرف الصحي">مياه الصرف الصحي</option>
-                    <option value="الكهرباء">الكهرباء</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">أساس القيمة *</label>
-                  <select className="form-control w-full h-12 text-lg" name="value_base_id" value={asset.value_base_id} onChange={e => handleAssetChange(idx, e)}>
-                    <option value="">اختر</option>
-                    <option value="القيمة السوقية">القيمة السوقية</option>
-                    <option value="الإيجار السوقي">الإيجار السوقي</option>
-                    <option value="القيمة المنصفة">القيمة المنصفة</option>
-                    <option value="القيمة الاستثمارية">القيمة الاستثمارية</option>
-                    <option value="القيمة التكاملية">القيمة التكاملية</option>
-                    <option value="قيمة التصفية">قيمة التصفية</option>
-                    <option value="القيمة العادلة">القيمة العادلة</option>
-                    <option value="القيمة السوقية العادلة">القيمة السوقية العادلة</option>
-                    <option value="أخرى">أخرى</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">تاريخ معاينة الأصل *</label>
-                  <input className="form-control w-full h-12 text-lg" name="inspected_at" type="date" value={asset.inspected_at} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">الرأي النهائي في القيمة *</label>
-                  <input className="form-control w-full h-12 text-lg" name="value" type="number" value={asset.value} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">القدرة *</label>
-                  <input className="form-control w-full h-12 text-lg" name="production_capacity" type="number" value={asset.production_capacity} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">وحدة قياس القدرة *</label>
-                  <input className="form-control w-full h-12 text-lg" name="production_capacity_measuring_unit" type="text" value={asset.production_capacity_measuring_unit} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">اسم المالك *</label>
-                  <input className="form-control w-full h-12 text-lg" name="owner_name" type="text" value={asset.owner_name} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">نوع المنتج *</label>
-                  <input className="form-control w-full h-12 text-lg" name="product_type" type="text" value={asset.product_type} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold mb-4 text-blue-800">معلومات أسلوب التقييم</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">أسلوب السوق *</label>
-                  <select className="form-control w-full h-12 text-lg" name="market_method" value={asset.market_method || ''} onChange={e => handleAssetChange(idx, e)}>
-                    <option value="">اختر</option>
-                    <option value="غير مستخدم">غير مستخدم</option>
-                    <option value="أساسي لتقدير القيمة">أساسي لتقدير القيمة</option>
-                    <option value="مساعد لتقدير القيمة">مساعد لتقدير القيمة</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">أسلوب التكلفة *</label>
-                  <select className="form-control w-full h-12 text-lg" name="cost_method" value={asset.cost_method || ''} onChange={e => handleAssetChange(idx, e)}>
-                    <option value="">اختر</option>
-                    <option value="غير مستخدم">غير مستخدم</option>
-                    <option value="أساسي لتقدير القيمة">أساسي لتقدير القيمة</option>
-                    <option value="مساعد لتقدير القيمة">مساعد لتقدير القيمة</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">القيمة (أسلوب السوق)</label>
-                  <input className="form-control w-full h-12 text-lg" name="value_method_1" type="text" value={asset.value_method_1 || ''} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">القيمة (أسلوب التكلفة)</label>
-                  <input className="form-control w-full h-12 text-lg" name="value_method_2" type="text" value={asset.value_method_2 || ''} onChange={e => handleAssetChange(idx, e)} />
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold mb-4 text-blue-800">معلومات الموقع</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">الدولة *</label>
-                  <select className="form-control w-full h-12 text-lg" name="country" value={asset.country || ''} onChange={e => handleAssetChange(idx, e)}>
-                    <option value="">اختر الدولة</option>
-                    <option value="السعودية">السعودية</option>
-                    <option value="الإمارات">الإمارات</option>
-                    <option value="مصر">مصر</option>
-                    <option value="الكويت">الكويت</option>
-                    <option value="قطر">قطر</option>
-                    <option value="البحرين">البحرين</option>
-                    <option value="عمان">عمان</option>
-                    <option value="الأردن">الأردن</option>
-                    <option value="لبنان">لبنان</option>
-                    <option value="سوريا">سوريا</option>
-                    <option value="العراق">العراق</option>
-                    <option value="فلسطين">فلسطين</option>
-                    <option value="اليمن">اليمن</option>
-                    <option value="أخرى">أخرى</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">المنطقة *</label>
-                  <select className="form-control w-full h-12 text-lg" name="region" value={asset.region || ''} onChange={e => handleAssetChange(idx, e)}>
-                    <option value="">اختر المنطقة</option>
-                    <option value="الرياض">الرياض</option>
-                    <option value="مكة المكرمة">مكة المكرمة</option>
-                    <option value="المدينة المنورة">المدينة المنورة</option>
-                    <option value="الشرقية">الشرقية</option>
-                    <option value="عسير">عسير</option>
-                    <option value="تبوك">تبوك</option>
-                    <option value="حائل">حائل</option>
-                    <option value="القصيم">القصيم</option>
-                    <option value="الباحة">الباحة</option>
-                    <option value="الجوف">الجوف</option>
-                    <option value="نجران">نجران</option>
-                    <option value="الحدود الشمالية">الحدود الشمالية</option>
-                    <option value="أخرى">أخرى</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block mb-2 font-semibold text-gray-700">المدينة *</label>
-                  <select className="form-control w-full h-12 text-lg" name="city" value={asset.city || ''} onChange={e => handleAssetChange(idx, e)}>
-                    <option value="">اختر المدينة</option>
-                    <option value="الرياض">الرياض</option>
-                    <option value="جدة">جدة</option>
-                    <option value="مكة">مكة</option>
-                    <option value="الدمام">الدمام</option>
-                    <option value="الخبر">الخبر</option>
-                    <option value="المدينة المنورة">المدينة المنورة</option>
-                    <option value="الطائف">الطائف</option>
-                    <option value="بريدة">بريدة</option>
-                    <option value="تبوك">تبوك</option>
-                    <option value="أبها">أبها</option>
-                    <option value="حائل">حائل</option>
-                    <option value="الجبيل">الجبيل</option>
-                    <option value="الهفوف">الهفوف</option>
-                    <option value="الخرج">الخرج</option>
-                    <option value="أخرى">أخرى</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          ))}
-          <div className="flex justify-end gap-4 mt-10">
-            <button className="btn btn-outline-primary btn-lg px-8 py-3 text-lg" type="button" onClick={handleSaveAssets}>حفظ</button>
-            <button className="btn btn-primary btn-lg px-8 py-3 text-lg" type="button" onClick={addAsset}>إضافة أصل آخر</button>
+
+      {/* Step 2: Upload Excel file only */}
+      {step === 2 && (
+        <div className="space-y-8">
+          <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center text-center bg-white hover:border-blue-400 transition-colors">
+            <Upload className="mx-auto mb-2 text-gray-400" size={40} />
+            <div className="mb-2 font-semibold text-gray-700">اسحب ملف Excel أو انقر للتحميل</div>
+            <div className="mb-4 text-sm text-gray-500">يجب أن يكون الملف بصيغة XLSX أو XLS</div>
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              id="excel-upload"
+              name="excel_file"
+              className="hidden"
+              onChange={e => {
+                const file = e.target.files?.[0] || null;
+                setForm(f => ({ ...f, excel_file: file }));
+              }}
+            />
+            <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all cursor-pointer mt-2" onClick={() => document.getElementById('excel-upload')?.click()}>
+              اختيار ملف Excel
+            </button>
+            {form.excel_file && (
+              <div className="mt-2 text-green-600 text-sm">تم اختيار الملف: {form.excel_file.name}</div>
+            )}
+          </div>
+          <div className="flex justify-between md:justify-end gap-4 mt-6">
+            <button
+              className="px-6 py-2 rounded border border-gray-400 bg-white text-gray-700 font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200"
+              type="button"
+              onClick={() => setStep(1)}
+            >
+              رجوع
+            </button>
+            <button
+              className="px-6 py-2 rounded border border-blue-600 bg-white text-blue-600 font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200 disabled:opacity-60"
+              type="button"
+              onClick={() => setStep(3)}
+              disabled={!form.excel_file}
+            >
+              متابعة
+            </button>
           </div>
         </div>
       )}
-      {step === 4 && (
+
+      {/* Step 3: Result step */}
+      {step === 3 && (
         <div className="bg-white rounded-2xl shadow p-8 mb-8">
-          <h2 className="text-2xl font-bold mb-6 text-green-700">تم إرسال التقرير بنجاح</h2>
-          <p className="mb-6 text-lg text-gray-700">تم إدخال البيانات وإرسالها بنجاح. يمكنك مراجعة ملخص التقرير أدناه:</p>
+          <h2 className="text-2xl font-bold mb-6 text-green-700">نتيجة ارسال التقارير</h2>
+          <p className="mb-6 text-lg text-gray-700">ملخص التقرير المرفوع:</p>
           <table className="w-full table-auto border rounded-xl shadow mb-8">
             <thead className="bg-blue-50">
               <tr>
                 <th className="px-4 py-2 border">رقم التقرير</th>
                 <th className="px-4 py-2 border">عنوان التقرير</th>
                 <th className="px-4 py-2 border">تاريخ التقييم</th>
-                <th className="px-4 py-2 border">عدد الأصول</th>
+                <th className="px-4 py-2 border">الحالة</th>
                 <th className="px-4 py-2 border">الإجراءات</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td className="px-4 py-2 border">{form.report_number || '---'}</td>
-                <td className="px-4 py-2 border">{form.title}</td>
-                <td className="px-4 py-2 border">{form.valued_at}</td>
-                <td className="px-4 py-2 border">{assets.length}</td>
+                <td className="px-4 py-2 border">{form.title || '—'}</td>
+                <td className="px-4 py-2 border">{form.valued_at || '—'}</td>
                 <td className="px-4 py-2 border">
-                  <button className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 font-bold mr-2" type="button" onClick={() => setShowSendModal(true)}>
+                  <select
+                    className="form-control h-10 text-base"
+                    value={resultStatus}
+                    onChange={e => setResultStatus(e.target.value as any)}
+                  >
+                    <option value="جديد">جديد</option>
+                    <option value="مكتمل جزئي">مكتمل جزئي</option>
+                    <option value=" مكتمل"> مكتمل</option>
+                  </select>
+                </td>
+                <td className="px-4 py-2 border">
+                  <button
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 font-bold mr-2"
+                    type="button"
+                    onClick={() => setShowSendModal(true)}
+                  >
                     إرسال
                   </button>
-                  <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 font-bold" type="button" onClick={() => setShowEditModal(true)}>
+                  <button
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 font-bold mr-2"
+                    type="button"
+                    onClick={() => setShowEditModal(true)}
+                  >
                     تعديل
+                  </button>
+                  <button
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 font-bold"
+                    type="button"
+                    onClick={() => { setShowSendModal(true); setSendStatus(null); setTimeout(handleSendReport, 0); }}
+                  >
+                    إعادة الإرسال
                   </button>
                 </td>
               </tr>
@@ -716,6 +478,7 @@ const EquipmentManualUpload: React.FC = () => {
           <div className="flex justify-end">
             <button className="btn btn-primary px-8 py-3 text-lg" type="button" onClick={() => setStep(1)}>رفع تقرير جديد</button>
           </div>
+
           {/* مودال الإرسال */}
           {showSendModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-green-100 bg-opacity-70 backdrop-blur-sm">
@@ -726,16 +489,18 @@ const EquipmentManualUpload: React.FC = () => {
                 </h3>
                 <div className="mb-4 grid grid-cols-2 gap-4">
                   <div className="font-bold text-gray-700">عنوان التقرير:</div>
-                  <div className="text-blue-900">{form.title}</div>
+                  <div className="text-blue-900">{form.title || '—'}</div>
                   <div className="font-bold text-gray-700 mt-2">رقم التقرير:</div>
                   <div className="text-gray-900">{form.report_number || '---'}</div>
+                  <div className="font-bold text-gray-700 mt-2">الحالة الحالية:</div>
+                  <div className="text-gray-900">{resultStatus}</div>
                 </div>
                 {sendStatus === null || sendStatus === 'sending' ? (
                   <div className="w-full my-4">
                     <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-4 bg-blue-500 transition-all duration-150" style={{ width: `${sendStatus === 'sending' ? sendProgress : 0}%` }}></div>
                     </div>
-                    <div className="text-center text-blue-600 font-bold mt-2">{sendStatus === 'sending' ? `جاري الإرسال... ${sendProgress}%` : 'جاهز للإرسال'}</div>
+                    <div className="text-center text-blue-600 font-bold mt-2">{sendStatus === 'sending' ? `جاري ال��رسال... ${sendProgress}%` : 'جاهز للإرسال'}</div>
                   </div>
                 ) : null}
                 {sendStatus === 'success' && (
@@ -758,6 +523,7 @@ const EquipmentManualUpload: React.FC = () => {
               </div>
             </div>
           )}
+
           {/* مودال التعديل */}
           {showEditModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
@@ -773,22 +539,6 @@ const EquipmentManualUpload: React.FC = () => {
                     <label className="block mb-2 font-semibold text-gray-700">تاريخ التقييم</label>
                     <input className="form-control w-full" type="date" value={editForm.valued_at} onChange={e => setEditForm(f => ({ ...f, valued_at: e.target.value }))} />
                   </div>
-                  {/* أضف باقي الحقول حسب الحاجة */}
-                </div>
-                <h4 className="text-lg font-bold text-blue-800 mb-4">معلومات الأصول المرتبطة</h4>
-                <div className="space-y-4">
-                  {assets.map((asset, idx) => (
-                    <div key={idx} className="bg-gray-50 rounded-lg p-4">
-                      <div className="font-bold text-gray-700 mb-2">{asset.asset_name}</div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>نوع الأصل: <span className="font-semibold">{asset.asset_type}</span></div>
-                        <div>القيمة: <span className="font-semibold text-green-700">{asset.value}</span></div>
-                        <div>المالك: <span className="font-semibold">{asset.owner_name}</span></div>
-                        <div>الدولة: <span className="font-semibold">{asset.country}</span></div>
-                        {/* أضف باقي بيانات الأصل */}
-                      </div>
-                    </div>
-                  ))}
                 </div>
                 <div className="flex gap-4 justify-end mt-8">
                   <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-bold hover:bg-gray-300" onClick={() => setShowEditModal(false)}>إلغاء</button>
@@ -799,6 +549,7 @@ const EquipmentManualUpload: React.FC = () => {
           )}
         </div>
       )}
+
       <style>{`
         body, .form-control, .btn, .form-label {
           font-family: 'Cairo', Tahoma, Arial, sans-serif;

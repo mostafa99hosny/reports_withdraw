@@ -41,11 +41,17 @@ const Sidebar: React.FC<SidebarProps> = ({
       name: 'mekyasReports',
       path: '/auth/mekyas'
     }, {
+      name: 'jadeerReports',
+      path: '/auth/jadeer' // أولاً صفحة تسجيل الدخول
+    }, {
       name: 'noqraReports',
       path: '/reports/noqra'
     }, {
       name: 'manualUpload',
       path: '/reports/manual-upload'
+    }, {
+      name: 'manualUploadWithId',
+      path: '/reports/manual-upload-with-id'
     }, {
       name: 'viewReports',
       path: '/reports/view'
@@ -59,6 +65,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       {
         name: 'manualUploadEquipment',
         path: '/equipment-reports/manual-upload'
+      },
+      {
+        name: 'manualUploadEquipmentWithId',
+        path: '/equipment-reports/manual-upload-with-id'
       }
     ]
   },
@@ -104,7 +114,25 @@ const Sidebar: React.FC<SidebarProps> = ({
                       {item.subItems.map((subItem, subIndex) => (
                         <li key={subIndex}>
                           <Link to={subItem.path} className={`flex items-center p-2 rounded-lg font-medium transition-colors ${isActive(subItem.path) ? 'bg-gradient-to-r from-blue-400 to-blue-200 text-white shadow' : 'hover:bg-blue-50 hover:text-blue-700 text-gray-700'}`}>
-                            <span className="flex-1 whitespace-nowrap">{subItem.name === 'manualUploadEquipment' ? t('manualUploadEquipment') : t(subItem.name)}</span>
+                            <span className="flex-1 whitespace-nowrap">
+                              {subItem.name === 'manualUploadEquipment'
+                                ? t('manualUploadEquipment')
+                                : subItem.name === 'manualUploadEquipmentWithId'
+                                ? 'manual Equipment With Id'
+                                : subItem.name === 'mekyasReports'
+                                ? 'تقارير مقياس'
+                                : subItem.name === 'noqraReports'
+                                ? 'تقارير نقرة'
+                                : subItem.name === 'manualUpload'
+                                ? 'رفع يدوي'
+                                : subItem.name === 'manualUploadWithId'
+                                ? 'رفع يدوي برقم التقرير'
+                                : subItem.name === 'jadeerReports'
+                                ? 'تقارير جدير'
+                                : subItem.name === 'viewReports'
+                                ? 'عرض التقارير'
+                                : t(subItem.name)}
+                            </span>
                           </Link>
                         </li>
                       ))}
