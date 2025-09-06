@@ -32,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({
     setUserDropdownOpen(false);
     navigate('/');
   };
-  const { t, lang, toggle } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
 
   return <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,14 +49,23 @@ const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-4">
-            {/* Language toggle */}
-            <button
-              onClick={toggle}
-              className="text-sm text-gray-600 hover:text-gray-800 border px-3 py-1 rounded"
-              aria-label="Change Language"
-            >
-              {lang === 'ar' ? t('english') : t('arabic')}
-            </button>
+            {/* Language toggle icons */}
+            <div className="flex items-center gap-2" aria-label="Change Language">
+              <button
+                onClick={() => setLang('ar')}
+                className={`text-xs px-2 py-1 rounded border ${lang === 'ar' ? 'bg-blue-600 text-white border-blue-600' : 'text-gray-700 hover:text-gray-900'}`}
+                title="العربية"
+              >
+                AR
+              </button>
+              <button
+                onClick={() => setLang('en')}
+                className={`text-xs px-2 py-1 rounded border ${lang === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'text-gray-700 hover:text-gray-900'}`}
+                title="English"
+              >
+                EN
+              </button>
+            </div>
 
             {user ? (
               <>

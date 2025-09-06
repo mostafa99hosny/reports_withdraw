@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   positionClass
 }) => {
   const location = useLocation();
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   // Track which menus are expanded
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
 
@@ -28,6 +28,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   React.useEffect(() => {
     setExpandedMenus({});
   }, []);
+
+  const isRTL = dir === 'rtl';
+  const iconMargin = isRTL ? 'ml-3' : 'mr-3';
+  const textMargin = isRTL ? 'mr-3' : 'ml-3';
 
   const menuItems: MenuItem[] = [{
     name: 'home',
@@ -104,34 +108,18 @@ const Sidebar: React.FC<SidebarProps> = ({
             <li key={index}>
               {item.subItems ? (
                 <div className="space-y-2">
-                  <div className={`flex items-center p-2 rounded-lg cursor-pointer transition-colors font-semibold text-gray-700 ${isSubActive(item.path) ? 'bg-gradient-to-r from-blue-200 to-blue-100 text-blue-800 shadow' : 'hover:bg-blue-100 hover:text-blue-700'}`} onClick={() => toggleMenu(item.path)}>
-                    <span className="ml-3 text-blue-600">{item.icon}</span>
-                    <span className="flex-1 mr-3 whitespace-nowrap">{t(item.name)}</span>
+                  <div className={`flex items-start min-w-0 p-2 rounded-lg cursor-pointer transition-colors font-semibold text-gray-700 ${isSubActive(item.path) ? 'bg-gradient-to-r from-blue-200 to-blue-100 text-blue-800 shadow' : 'hover:bg-blue-100 hover:text-blue-700'}`} onClick={() => toggleMenu(item.path)}>
+                    <span className={`${iconMargin} text-blue-600`}>{item.icon}</span>
+                    <span className={`flex-1 min-w-0 ${textMargin} whitespace-normal break-words leading-snug`} title={t(item.name)}>{t(item.name)}</span>
                     {expandedMenus[item.path] ? <ChevronDown className="h-4 w-4 text-blue-600" /> : <ChevronRight className="h-4 w-4 text-blue-400" />}
                   </div>
                   {expandedMenus[item.path] && (
-                    <ul className="mr-6 space-y-1 border-r border-blue-200 pr-3">
+                    <ul className={`${isRTL ? 'mr-6 border-r pr-3' : 'ml-6 border-l pl-3'} space-y-1 border-blue-200`}>
                       {item.subItems.map((subItem, subIndex) => (
                         <li key={subIndex}>
-                          <Link to={subItem.path} className={`flex items-center p-2 rounded-lg font-medium transition-colors ${isActive(subItem.path) ? 'bg-gradient-to-r from-blue-400 to-blue-200 text-white shadow' : 'hover:bg-blue-50 hover:text-blue-700 text-gray-700'}`}>
-                            <span className="flex-1 whitespace-nowrap">
-                              {subItem.name === 'manualUploadEquipment'
-                                ? t('manualUploadEquipment')
-                                : subItem.name === 'manualUploadEquipmentWithId'
-                                ? 'manual Equipment With Id'
-                                : subItem.name === 'mekyasReports'
-                                ? 'تقارير مقياس'
-                                : subItem.name === 'noqraReports'
-                                ? 'تقارير نقرة'
-                                : subItem.name === 'manualUpload'
-                                ? 'رفع يدوي'
-                                : subItem.name === 'manualUploadWithId'
-                                ? 'رفع يدوي برقم التقرير'
-                                : subItem.name === 'jadeerReports'
-                                ? 'تقارير جدير'
-                                : subItem.name === 'viewReports'
-                                ? 'عرض التقارير'
-                                : t(subItem.name)}
+                          <Link to={subItem.path} className={`flex items-start min-w-0 p-2 rounded-lg font-medium transition-colors ${isActive(subItem.path) ? 'bg-gradient-to-r from-blue-400 to-blue-200 text-white shadow' : 'hover:bg-blue-50 hover:text-blue-700 text-gray-700'}`}>
+                            <span className="flex-1 min-w-0 whitespace-normal break-words leading-snug" title={t(subItem.name)}>
+                              {t(subItem.name)}
                             </span>
                           </Link>
                         </li>
@@ -140,9 +128,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   )}
                 </div>
               ) : (
-                <Link to={item.path} className={`flex items-center p-2 rounded-lg font-semibold transition-colors ${isActive(item.path) ? 'bg-gradient-to-r from-blue-500 to-blue-300 text-white shadow' : 'hover:bg-blue-100 hover:text-blue-700 text-gray-700'}`}>
-                  <span className="ml-3 text-blue-600">{item.icon}</span>
-                  <span className="flex-1 mr-3 whitespace-nowrap">{t(item.name)}</span>
+                <Link to={item.path} className={`flex items-start min-w-0 p-2 rounded-lg font-semibold transition-colors ${isActive(item.path) ? 'bg-gradient-to-r from-blue-500 to-blue-300 text-white shadow' : 'hover:bg-blue-100 hover:text-blue-700 text-gray-700'}`}>
+                  <span className={`${iconMargin} text-blue-600`}>{item.icon}</span>
+                  <span className={`flex-1 min-w-0 ${textMargin} whitespace-normal break-words leading-snug`} title={t(item.name)}>{t(item.name)}</span>
                 </Link>
               )}
             </li>
