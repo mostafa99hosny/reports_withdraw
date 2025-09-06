@@ -15,6 +15,7 @@ const EquipmentManualUpload: React.FC = () => {
     value: '',
     currency_id: '1',
     excel_file: null as File | null,
+    pdf_file: null as File | null,
     report_number: '',
   });
 
@@ -216,6 +217,30 @@ const EquipmentManualUpload: React.FC = () => {
                 <option value="6">جنيه سوداني</option>
               </select>
             </div>
+          </div>
+
+          {/* رفع ملف PDF للتقرير */}
+          <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 mb-8 flex flex-col items-center text-center bg-white hover:border-blue-400 transition-colors">
+            <Upload className="mx-auto mb-2 text-gray-400" size={40} />
+            <div className="mb-2 font-semibold text-gray-700">اسحب ملف PDF أو انقر للتحميل</div>
+            <div className="mb-4 text-sm text-gray-500">يجب أن يكون الملف بصيغة PDF</div>
+            <input
+              type="file"
+              accept="application/pdf,.pdf"
+              id="pdf-upload"
+              name="pdf_file"
+              className="hidden"
+              onChange={e => {
+                const file = e.target.files?.[0] || null;
+                setForm(f => ({ ...f, pdf_file: file }));
+              }}
+            />
+            <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all cursor-pointer mt-2" onClick={() => document.getElementById('pdf-upload')?.click()}>
+              اختيار ملف PDF
+            </button>
+            {form.pdf_file && (
+              <div className="mt-2 text-green-600 text-sm">تم اختيار الملف: {form.pdf_file.name}</div>
+            )}
           </div>
 
           {/* بيانات العميل */}
